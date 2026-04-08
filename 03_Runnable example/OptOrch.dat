@@ -1,0 +1,5 @@
+data;
+param ns := 30;
+param cu := 0.5;
+param nc := 100;
+param nd := 20;

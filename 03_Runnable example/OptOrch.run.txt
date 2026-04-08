@@ -1,0 +1,11 @@
+reset;
+model so.mod;
+data so.dat;
+read {i in S} b[i] < b.dat;
+read {i in S} l[i] < l.dat;
+read {i in S} u[i] < u.dat;
+read {i in S, j in S} c[i,j] < c.dat;
+option solver GUROBI;
+solve;
+display gain;
+display x;
