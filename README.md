@@ -61,3 +61,12 @@ The workflow can also be run through R. In this route, R is used to generate sim
 
 - AMPL-based execution requires AMPL and an optimization solver. The provided run script currently sets `GUROBI` as the solver.
 - R-based execution requires the packages used in the scripts, including `slam`, `gurobi`, `Matrix`, and `data.table`.
+
+## Contact
+For any inquiries, please contact:
+
+- Corresponding author: Prof. Milan Lstibůrek  
+	E-mail: lstiburek@fld.czu.cz
+
+- First author: Dr. Ye-Ji Kim  
+	E-mail: kyeji1107@gmail.com
