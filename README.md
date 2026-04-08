@@ -4,6 +4,12 @@ This repository contains the materials provided as Supplementary File S1 for the
 
 It provides the core AMPL optimization model, tailored model variants, a runnable AMPL example, and R scripts for simulation-based execution and output processing.
 
+## Requirements
+- AMPL: https://ampl.com
+- Solver: A solver supporting MIQP (e.g., Gurobi).
+- R Environment
+  - Required packages: MoBPS, ASReml-R
+
 ## Repository Structure
 
 ### 01_Core model
