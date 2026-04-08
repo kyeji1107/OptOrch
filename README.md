@@ -1,6 +1,8 @@
-# OptOrch Supplementary File S1
+# OptOrch: Advanced algorithmic deployment for seed orchards
 
-This repository contains the materials distributed as Supplementary File S1 for OptOrch. It provides the core AMPL optimization model, tailored model variants, a runnable AMPL example, and R scripts for simulation-based execution and output processing.
+This repository contains the materials provided as Supplementary File S1 for the optimization framework described in the manuscript, “OptOrch: Advanced algorithmic deployment for seed orchards”.
+
+It provides the core AMPL optimization model, tailored model variants, a runnable AMPL example, and R scripts for simulation-based execution and output processing.
 
 ## Repository Structure
 
@@ -28,7 +30,7 @@ A basic AMPL example is included to demonstrate the workflow with separated inpu
 - `u.dat`: input file containing upper contribution bounds.
 - `c.dat`: input file containing the coancestry matrix.
 - `OptOrch.dat`: integrated data file specifying the main scalar parameters for the example.
-- `OptOrch.run.txt`: AMPL run script for executing the runnable example.
+- `OptOrch.run`: AMPL run script for executing the runnable example.
 
 ### 04_R execution files
 
@@ -45,7 +47,7 @@ The optimization can be run directly in AMPL using the supplied model, data, and
 
 - `OptOrch.mod`
 - `OptOrch.dat`
-- `OptOrch.run.txt`
+- `OptOrch.run`
 - `b.dat`, `l.dat`, `u.dat`, and `c.dat`
 
 The tailored model files in `02_Tailored models` can be used as alternative formulations for specific scenarios.
@@ -59,8 +61,9 @@ The workflow can also be run through R. In this route, R is used to generate sim
 
 ## Software Notes
 
-- AMPL-based execution requires AMPL and an optimization solver. The provided run script currently sets `GUROBI` as the solver.
-- R-based execution requires the packages used in the scripts, including `slam`, `gurobi`, `Matrix`, and `data.table`.
+- AMPL-based execution requires AMPL and an optimization solver. 
+- R-based execution requires the packages used in the scripts.
+- The authors used a solver Gurobi for optimization.
 
 ## Contact
 For any inquiries, please contact:
