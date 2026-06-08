@@ -1,5 +1,5 @@
 # OptOrch: A modular optimization toolkit for forest tree seed orchard deployment
-This repository contains the materials provided as Supplementary File S1 for the optimization framework described in the manuscript, “OptOrch: A modular optimization toolkit for forest tree seed orchard
+This repository contains the materials provided as supplementary files for the optimization framework described in the manuscript, “OptOrch: A modular optimization toolkit for forest tree seed orchard
 deployment”.
 OptOrch provides a modular optimization framework for seed orchard deployment. The repository includes the core AMPL optimization model, six tailored AMPL model variants, a minimal AMPL example, and R-based materials for reproducing the simulation-based analyses and figures 2–3 presented in the manuscript.
 ## Repository overview
