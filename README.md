@@ -52,14 +52,16 @@ OptOrch/
 │       ├── OptOrch_supp4.mod
 │       ├── OptOrch_supp5.mod
 │       └── OptOrch_supp6.mod
-├── 02_minimal_AMPL_example/
-│   ├── OptOrch_core.mod
-│   ├── OptOrch.dat
-│   ├── OptOrch.run
-│   ├── b.dat
-│   ├── l.dat
-│   ├── u.dat
-│   └── c.dat
+├── 02_examples/
+│   ├── AMPL_example_guide.md
+│   └── 001_minimal_AMPL_example/
+│       ├── OptOrch_core.mod
+│       ├── OptOrch.dat
+│       ├── OptOrch.run
+│       ├── b.dat
+│       ├── c.dat
+│       ├── l.dat
+│       └── u.dat
 ├── 03_manuscript_reproduction/
 │   ├── 001_simulated_data/
 │   │   ├── simulate_MoBPS_population.R
@@ -121,27 +123,42 @@ The tailored models illustrate formulation variants and biological extensions di
 	- Explicit female-male formulation for pollen contamination.
 - `OptOrch_supp6.mod`
 	- Aggregate formulation for pollen contamination.
-## 02_minimal_AMPL_example
+## 02_examples
+
+This directory contains example files for running OptOrch.
+
+### Minimal AMPL example
+
 A minimal AMPL example is included to demonstrate the basic AMPL workflow with separated input files and an execution script.
 The example is located in:
-~~~text
-02_minimal_AMPL_example/
-~~~
+
+```text
+02_examples/001_minimal_AMPL_example/
+```
+
 Files included:
-- `OptOrch_core.mod`
-	- Core AMPL model file used for the example.
-- `OptOrch.dat`
-	- Integrated data file specifying the main scalar parameters for the example.
-- `OptOrch.run`
-	- AMPL run script for executing the example.
-- `b.dat`
-	- Input file containing breeding values.
-- `l.dat`
-	- Input file containing lower contribution bounds.
-- `u.dat`
-	- Input file containing upper contribution bounds.
-- `c.dat`
-	- Input file containing the coancestry matrix.
+
+* `OptOrch_core.mod`
+
+  * Core AMPL model file used for the example.
+* `OptOrch.dat`
+
+  * Integrated data file specifying the main scalar parameters for the example.
+* `OptOrch.run`
+
+  * AMPL run script for executing the example.
+* `b.dat`
+
+  * Input file containing breeding values.
+* `l.dat`
+
+  * Input file containing lower contribution bounds.
+* `u.dat`
+
+  * Input file containing upper contribution bounds.
+* `c.dat`
+
+  * Input file containing the coancestry matrix.
 
 Further details on AMPL installation, license setup, solver requirements, file roles, and the execution workflow are provided in:
 
