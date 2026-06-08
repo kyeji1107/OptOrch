@@ -163,7 +163,7 @@ Files included:
 Further details on AMPL installation, license setup, solver requirements, file roles, and the execution workflow are provided in:
 
 ~~~text
-02_minimal_AMPL_example/file_description.md
+02_examples/AMPL_example_guide.md
 ~~~
 
 ## 03_manuscript_reproduction
