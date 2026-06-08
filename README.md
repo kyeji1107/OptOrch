@@ -147,6 +147,7 @@ Further details on AMPL installation, license setup, solver requirements, file r
 
 ~~~text
 02_minimal_AMPL_example/file_description.md
+~~~
 
 ## 03_manuscript_reproduction
 This directory contains R-only materials for reproducing the simulation-based manuscript analyses and Figures 2–3.
