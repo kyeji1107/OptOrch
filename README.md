@@ -17,22 +17,26 @@ The repository is organized into three main parts.
 	- The authors used Gurobi.
 ### R-based manuscript reproduction
 The R scripts require an R environment with the packages used in each script.
+
 For simulation data generation:
 - `MoBPS`
 - `RandomFieldsUtils`
 - `miraculix`
 - `ASRgenomics`
 - `ASRemL-R`
+  
 For scenario optimization:
 - `slam`
 - `gurobi`
 - `Matrix`
 - `data.table`
+  
 For figure generation:
 - `data.table`
 - `ggplot2`
 - `patchwork`
 - `tidyverse`
+  
 Note: `ASRemL-R` and `gurobi` require separate installation and licensing.
 ## Repository structure
 ~~~text
