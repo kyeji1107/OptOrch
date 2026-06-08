@@ -67,7 +67,7 @@ The AMPL workflow in this folder follows these steps:
 	- `u.dat`
 	- `c.dat`
 4. Set the solver.
-5. Solve the optimization problem.
+5. Solve the optimization problem from `OptOrch.run`.
 6. Display the optimized contribution values and selected candidates.
 ## Notes for users
 - If AMPL cannot find the solver, check whether the solver is correctly installed and available to AMPL.
