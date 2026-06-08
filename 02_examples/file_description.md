@@ -26,28 +26,22 @@ To run this example, users need:
 	- The authors used Gurobi.
 - A valid AMPL license
 - A valid solver license, if required by the selected solver
-## Installing AMPL
-1. Download AMPL from the official AMPL website:
-	- https://ampl.com
-2. Install AMPL following the instructions for your operating system.
-3. Make sure that the AMPL executable is available from your terminal or command prompt.
-4. Check that AMPL runs correctly by opening a terminal and typing:
-~~~text
-ampl
-~~~
-If AMPL starts successfully, the AMPL prompt will appear:
-~~~text
-ampl:
-~~~
-## License setup
-AMPL requires a valid license for full functionality.
-If you received a license UUID, activate it from within AMPL using:
-~~~text
-shell "amplkey activate --uuid <license-uuid>";
-~~~
-Replace `<license-uuid>` with your own AMPL license UUID.
-Academic users may be eligible for an AMPL academic license through the AMPL license portal.
-Solver licenses are managed separately. For example, if Gurobi is used as the solver, a working Gurobi installation and license are required.
+## Installing AMPL and setting up licenses
+
+Please refer to the official AMPL documentation for installation and license activation:
+
+- AMPL website: https://ampl.com
+- AMPL installation guide: https://ampl.com/ampl-install-guide/
+- AMPL installation documentation: https://dev.ampl.com/ampl/install.html
+- AMPL license troubleshooting: https://dev.ampl.com/help/dynamic-license-troubleshooting.html
+
+If Gurobi is used as the solver, users also need a working Gurobi installation and license:
+
+- Gurobi website: https://www.gurobi.com
+- Gurobi documentation: https://docs.gurobi.com/
+- Gurobi license setup guide: https://support.gurobi.com/hc/en-us/articles/12872879801105-How-do-I-retrieve-and-set-up-a-Gurobi-license
+
+The authors used Gurobi as the optimization solver in the manuscript analyses.
 ## Running the example
 1. Open a terminal or command prompt.
 2. Move to this folder:
