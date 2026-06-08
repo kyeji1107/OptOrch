@@ -142,8 +142,12 @@ Files included:
 	- Input file containing upper contribution bounds.
 - `c.dat`
 	- Input file containing the coancestry matrix.
-### Running the minimal AMPL example
-Open AMPL in the `02_minimal_AMPL_example/` directory and run.
+
+Further details on AMPL installation, license setup, solver requirements, file roles, and the execution workflow are provided in:
+
+~~~text
+02_minimal_AMPL_example/file_description.md
+
 ## 03_manuscript_reproduction
 This directory contains R-only materials for reproducing the simulation-based manuscript analyses and Figures 2–3.
 The manuscript reproduction workflow is organized as follows.
