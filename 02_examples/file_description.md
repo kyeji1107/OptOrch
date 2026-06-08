@@ -74,4 +74,4 @@ The AMPL workflow in this folder follows these steps:
 - If AMPL reports a license error, check whether the AMPL license has been activated.
 - If the solver reports a license error, check the solver license separately.
 - If file-loading errors occur, make sure that all files remain in the same folder as `OptOrch.run`.
-- This example is intended as a small standalone demonstration. The manuscript reproduction analyses are provided separately in `03_manuscript_reproduction/`.
+  
