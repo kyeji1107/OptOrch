@@ -1,81 +1,263 @@
-# OptOrch: A modular optimization toolkit for forest tree seed orchard deployment
-
-This repository contains the materials provided as Supplementary File S1 for the optimization framework described in the manuscript, “OptOrch: A modular optimization toolkit for forest tree seed orchard deployment”.
-
-It provides the core AMPL optimization model, tailored model variants, a runnable AMPL example, and R scripts for simulation-based execution and output processing.
-
+# OptOrch: Advanced algorithmic deployment for seed orchards
+This repository contains the materials provided as Supplementary File S1 for the optimization framework described in the manuscript, “OptOrch: Advanced algorithmic deployment for seed orchards”.
+OptOrch provides a modular optimization framework for seed orchard deployment. The repository includes the core AMPL optimization model, six tailored AMPL model variants, a minimal AMPL example, and R-based materials for reproducing the simulation-based analyses and Figures 2–3 presented in the manuscript.
+## Repository overview
+The repository is organized into three main parts.
+- `01_models/`
+	- Contains the core AMPL formulation and six tailored AMPL model variants.
+- `02_minimal_AMPL_example/`
+	- Provides a small standalone AMPL example for users who want to inspect and run the algebraic formulation directly.
+- `03_manuscript_reproduction/`
+	- Contains R-only materials for reproducing the simulation-based manuscript scenarios and Figures 2–3.
 ## Requirements
+### AMPL-based example
 - AMPL: https://ampl.com
-- Solver: A solver supporting MIQP (e.g., Gurobi).
-- R Environment
-  - Required packages: MoBPS, ASReml-R
-
-## Repository Structure
-
-### 01_Core model
-
-- `OptOrch.mod`: core AMPL model used in the main analyses.
-
-### 02_Tailored models
-
-Additional AMPL model files illustrating formulation variants and biological extensions discussed in the manuscript.
-
-- `OptOrch_supp1.mod`: logical-operator formulation for selection-dependent bounds.
-- `OptOrch_supp2.mod`: logical formulation for constraining pairwise coancestry.
-- `OptOrch_supp3.mod`: linearized formulation for constraining pairwise coancestry.
-- `OptOrch_supp4.mod`: formulation with separate female and male contributions.
-- `OptOrch_supp5.mod`: explicit female-male formulation for pollen contamination.
-- `OptOrch_supp6.mod`: aggregate formulation for pollen contamination.
-
-### 03_Runnable example
-
-A basic AMPL example is included to demonstrate the workflow with separated input files and an execution script.
-
-- `b.dat`: input file containing breeding values.
-- `l.dat`: input file containing lower contribution bounds.
-- `u.dat`: input file containing upper contribution bounds.
-- `c.dat`: input file containing the coancestry matrix.
-- `OptOrch.dat`: integrated data file specifying the main scalar parameters for the example.
-- `OptOrch.run`: AMPL run script for executing the runnable example.
-
-### 04_R execution files
-
-R scripts supporting simulation-based case studies and downstream result handling.
-
-- `mobps.R`: data generation script using MoBPS.
-- `OptOrch.R`: optimization execution and output processing script.
-
-## Execution Options
-
-### AMPL-based execution
-
-The optimization can be run directly in AMPL using the supplied model, data, and run files. The runnable example in `03_Runnable example` provides a minimal execution setup using:
-
-- `OptOrch.mod`
+- Solver supporting MIQP/MIQCP
+	- The authors used Gurobi.
+### R-based manuscript reproduction
+The R scripts require an R environment with the packages used in each script.
+For simulation data generation:
+- `MoBPS`
+- `RandomFieldsUtils`
+- `miraculix`
+- `ASRgenomics`
+- `ASRemL-R`
+For scenario optimization:
+- `slam`
+- `gurobi`
+- `Matrix`
+- `data.table`
+For figure generation:
+- `data.table`
+- `ggplot2`
+- `patchwork`
+- `tidyverse`
+Note: `ASRemL-R` and `gurobi` require separate installation and licensing.
+## Repository structure
+~~~text
+OptOrch/
+├── README.md
+├── 01_models/
+│   ├── 001_core/
+│   │   └── OptOrch_core.mod
+│   └── 002_tailored_models/
+│       ├── OptOrch_supp1.mod
+│       ├── OptOrch_supp2.mod
+│       ├── OptOrch_supp3.mod
+│       ├── OptOrch_supp4.mod
+│       ├── OptOrch_supp5.mod
+│       └── OptOrch_supp6.mod
+├── 02_minimal_AMPL_example/
+│   ├── OptOrch_core.mod
+│   ├── OptOrch.dat
+│   ├── OptOrch.run
+│   ├── b.dat
+│   ├── l.dat
+│   ├── u.dat
+│   └── c.dat
+├── 03_manuscript_reproduction/
+│   ├── 001_simulated_data/
+│   │   ├── simulate_MoBPS_population.R
+│   │   └── MoBPS_generated_data/
+│   │       ├── file_description.md
+│   │       └── Heri_0.2/
+│   ├── 002_scenario1_status_number/
+│   │   ├── run_scenario1_status_number.R
+│   │   └── outputs/
+│   │       ├── file_description.md
+│   │       ├── ns_10/
+│   │       ├── ns_20/
+│   │       ├── ns_30/
+│   │       └── ns_40/
+│   ├── 003_scenario2_pollen_contamination/
+│   │   ├── run_scenario2_pollen_contamination.R
+│   │   └── outputs/
+│   │       ├── file_description.md
+│   │       ├── ns_10/
+│   │       ├── ns_20/
+│   │       ├── ns_30/
+│   │       └── ns_40/
+│   └── 004_figures/
+│       ├── figure2_contributions/
+│       │   ├── make_figure2_contributions.R
+│       │   └── outputs/
+│       │       ├── figure2_data_Ns10.csv
+│       │       ├── figure2_data_Ns40.csv
+│       │       └── figure2_contributions.pdf
+│       └── figure3_genetic_response/
+│           ├── make_figure3_genetic_response.R
+│           └── outputs/
+│               ├── figure3_data.csv
+│               └── figure3_genetic_response.pdf
+└── LICENSE
+~~~
+## 01_models
+### Core model
+The core AMPL model is provided in:
+~~~text
+01_models/001_core/OptOrch_core.mod
+~~~
+This file contains the main optimization formulation used by OptOrch.
+### Tailored model variants
+Additional AMPL model files are provided in:
+~~~text
+01_models/002_tailored_models/
+~~~
+The tailored models illustrate formulation variants and biological extensions discussed in the manuscript.
+- `OptOrch_supp1.mod`
+	- Logical-operator formulation for selection-dependent lower and upper contribution bounds.
+- `OptOrch_supp2.mod`
+	- Logical formulation for constraining pairwise coancestry.
+- `OptOrch_supp3.mod`
+	- Linearized formulation for constraining pairwise coancestry.
+- `OptOrch_supp4.mod`
+	- Formulation with separate female and male contributions.
+- `OptOrch_supp5.mod`
+	- Explicit female-male formulation for pollen contamination.
+- `OptOrch_supp6.mod`
+	- Aggregate formulation for pollen contamination.
+## 02_minimal_AMPL_example
+A minimal AMPL example is included to demonstrate the basic AMPL workflow with separated input files and an execution script.
+The example is located in:
+~~~text
+02_minimal_AMPL_example/
+~~~
+Files included:
+- `OptOrch_core.mod`
+	- Core AMPL model file used for the example.
 - `OptOrch.dat`
+	- Integrated data file specifying the main scalar parameters for the example.
 - `OptOrch.run`
-- `b.dat`, `l.dat`, `u.dat`, and `c.dat`
-
-The tailored model files in `02_Tailored models` can be used as alternative formulations for specific scenarios.
-
-### R-based execution
-
-The workflow can also be run through R. In this route, R is used to generate simulated populations, estimate breeding values, construct relationship matrices, execute the optimization, and process outputs.
-
-- `mobps.R` provides the simulation and data generation workflow.
-- `OptOrch.R` provides optimization execution and result processing.
-
-## Software Notes
-
-- AMPL-based execution requires AMPL and an optimization solver. 
-- R-based execution requires the packages used in the scripts.
-- The authors used a solver Gurobi for optimization.
-
+	- AMPL run script for executing the example.
+- `b.dat`
+	- Input file containing breeding values.
+- `l.dat`
+	- Input file containing lower contribution bounds.
+- `u.dat`
+	- Input file containing upper contribution bounds.
+- `c.dat`
+	- Input file containing the coancestry matrix.
+### Running the minimal AMPL example
+Open AMPL in the `02_minimal_AMPL_example/` directory and run:
+~~~text
+include OptOrch.run;
+~~~
+## 03_manuscript_reproduction
+This directory contains R-only materials for reproducing the simulation-based manuscript analyses and Figures 2–3.
+The manuscript reproduction workflow is organized as follows.
+### Step 1. Simulated data
+Simulation code and MoBPS-generated data are provided in:
+~~~text
+03_manuscript_reproduction/001_simulated_data/
+~~~
+Files and folders:
+- `simulate_MoBPS_population.R`
+	- R script used to generate simulated populations and related data using MoBPS.
+- `MoBPS_generated_data/`
+	- Folder containing MoBPS-generated data used by the scenario scripts.
+- `MoBPS_generated_data/file_description.md`
+	- Description of the generated data files.
+- `MoBPS_generated_data/Heri_0.2/`
+	- Simulation outputs generated under heritability 0.2.
+The generated data include replicate-level files such as:
+- `rep*_Np1_Data.csv`
+- `rep*_Np2_Data.csv`
+- `rep*_Offspring_Data.csv`
+- `rep*_Nr_Data.csv`
+- `rep*_GBLUP_results.csv`
+- `rep*_Gmatrix_tuned_all.csv`
+- `rep*_Gmatrix_tuned_Np2.csv`
+### Step 2. Scenario 1: status number constraint
+Scenario 1 is provided in:
+~~~text
+03_manuscript_reproduction/002_scenario1_status_number/
+~~~
+Files and folders:
+- `run_scenario1_status_number.R`
+	- R script for running Scenario 1.
+	- The script repeats the optimization for `Ns = 10, 20, 30, 40`.
+- `outputs/`
+	- Optimization outputs for Scenario 1.
+- `outputs/file_description.md`
+	- Description of the output files.
+The output folders are organized by status number and replicate:
+~~~text
+outputs/
+├── ns_10/
+├── ns_20/
+├── ns_30/
+└── ns_40/
+~~~
+Each status-number folder contains replicate folders such as:
+~~~text
+rep_1/
+rep_2/
+...
+rep_30/
+~~~
+### Step 3. Scenario 2: pollen contamination
+Scenario 2 is provided in:
+~~~text
+03_manuscript_reproduction/003_scenario2_pollen_contamination/
+~~~
+Files and folders:
+- `run_scenario2_pollen_contamination.R`
+	- R script for running Scenario 2.
+	- The script repeats the optimization for `Ns = 10, 20, 30, 40` under pollen contamination.
+- `outputs/`
+	- Optimization outputs for Scenario 2.
+- `outputs/file_description.md`
+	- Description of the output files.
+The output folders follow the same structure as Scenario 1.
+### Step 4. Figure 2 reproduction
+Figure 2 can be reproduced using:
+~~~text
+03_manuscript_reproduction/004_figures/figure2_contributions/make_figure2_contributions.R
+~~~
+Expected files in the `outputs/` folder:
+- `figure2_data_Ns10.csv`
+- `figure2_data_Ns40.csv`
+- `figure2_contributions.pdf`
+### Step 5. Figure 3 reproduction
+Figure 3 can be reproduced using:
+~~~text
+03_manuscript_reproduction/004_figures/figure3_genetic_response/make_figure3_genetic_response.R
+~~~
+Expected files in the `outputs/` folder:
+- `figure3_data.csv`
+- `figure3_genetic_response.pdf`
+## Running the R scripts
+Each R script uses relative paths based on the current working directory.
+Before running a script, set the working directory to the folder containing that script.
+For example, to run Scenario 1:
+~~~r
+setwd("03_manuscript_reproduction/002_scenario1_status_number")
+source("run_scenario1_status_number.R")
+~~~
+To run Scenario 2:
+~~~r
+setwd("03_manuscript_reproduction/003_scenario2_pollen_contamination")
+source("run_scenario2_pollen_contamination.R")
+~~~
+To reproduce Figure 2:
+~~~r
+setwd("03_manuscript_reproduction/004_figures/figure2_contributions")
+source("make_figure2_contributions.R")
+~~~
+To reproduce Figure 3:
+~~~r
+setwd("03_manuscript_reproduction/004_figures/figure3_genetic_response")
+source("make_figure3_genetic_response.R")
+~~~
+## Software notes
+- The AMPL example requires AMPL and an optimization solver.
+- The R-based scenario scripts require the R package `gurobi` and a working Gurobi installation.
+- The simulation script requires MoBPS and ASRemL-R.
+- The scenario and figure scripts use relative paths. Run each script from its own folder.
+- The authors used Gurobi as the optimization solver.
 ## Contact
 For any inquiries, please contact:
-
-- Corresponding author: Prof. Milan Lstibůrek  
-	E-mail: lstiburek@fld.czu.cz
-
-- First author: Dr. Ye-Ji Kim  
-	E-mail: kyeji1107@gmail.com
+- Corresponding author: Prof. Milan Lstibůrek
+	- E-mail: lstiburek@fld.czu.cz
+- First author: Dr. Ye-Ji Kim
+	- E-mail: kyeji1107@gmail.com
