@@ -167,7 +167,7 @@ Further details on AMPL installation, license setup, solver requirements, file r
 ~~~
 
 ## 03_manuscript_reproduction
-This directory contains R-only materials for reproducing the simulation-based manuscript analyses and Figures 2–3.
+This directory contains R-only materials for reproducing the simulation-based manuscript analyses and figures 2–3.
 The manuscript reproduction workflow is organized as follows.
 ### Step 1. Simulated data
 Simulation code and MoBPS-generated data are provided in:
@@ -263,12 +263,12 @@ To run Scenario 2:
 setwd("03_manuscript_reproduction/003_scenario2_pollen_contamination")
 source("run_scenario2_pollen_contamination.R")
 ~~~
-To reproduce Figure 2:
+To reproduce figure 2:
 ~~~r
 setwd("03_manuscript_reproduction/004_figures/figure2_contributions")
 source("make_figure2_contributions.R")
 ~~~
-To reproduce Figure 3:
+To reproduce figure 3:
 ~~~r
 setwd("03_manuscript_reproduction/004_figures/figure3_genetic_response")
 source("make_figure3_genetic_response.R")
