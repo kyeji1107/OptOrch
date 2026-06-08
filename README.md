@@ -143,10 +143,7 @@ Files included:
 - `c.dat`
 	- Input file containing the coancestry matrix.
 ### Running the minimal AMPL example
-Open AMPL in the `02_minimal_AMPL_example/` directory and run:
-~~~text
-include OptOrch.run;
-~~~
+Open AMPL in the `02_minimal_AMPL_example/` directory and run.
 ## 03_manuscript_reproduction
 This directory contains R-only materials for reproducing the simulation-based manuscript analyses and Figures 2–3.
 The manuscript reproduction workflow is organized as follows.
