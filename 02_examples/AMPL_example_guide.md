@@ -43,20 +43,71 @@ If Gurobi is used as the solver, users also need a working Gurobi installation a
 
 The authors used Gurobi as the optimization solver in the manuscript analyses.
 ## Running the example
-1. Open a terminal or command prompt.
-2. Move to this folder:
+
+This minimal example can be executed through several AMPL interfaces.
+
+We recommend using the AMPL IDE because it allows users to inspect the model file, data files, and run script in a single working environment.
+
+### Option 1. Run from the AMPL IDE
+
+1. Open the AMPL IDE.
+
+2. Open the example folder:
+
 ~~~text
-cd 02_minimal_AMPL_example
+02_examples/001_minimal_AMPL_example/
 ~~~
-3. Start AMPL:
-~~~text
-ampl
-~~~
-4. Run the example:
+
+3. Inspect the model, data, and run files if needed:
+
+- `OptOrch_core.mod`
+- `OptOrch.dat`
+- `OptOrch.run`
+- `b.dat`
+- `l.dat`
+- `u.dat`
+- `c.dat`
+
+4. Execute the run script:
+
 ~~~text
 include OptOrch.run;
 ~~~
+
 The optimization problem will be solved using the solver specified in `OptOrch.run`.
+
+### Option 2. Run from a terminal or command prompt
+
+1. Open a terminal or command prompt.
+
+2. Move to the example folder:
+
+~~~text
+cd 02_examples/001_minimal_AMPL_example
+~~~
+
+3. Start AMPL:
+
+~~~text
+ampl
+~~~
+
+4. Run the example:
+
+~~~text
+include OptOrch.run;
+~~~
+
+The optimization problem will be solved using the solver specified in `OptOrch.run`.
+
+### Option 3. Run through an AMPL API
+
+AMPL can also be called from programming environments using AMPL APIs.
+
+For API-based execution, please refer to the official AMPL API documentation:
+
+- AMPL APIs: https://dev.ampl.com/ampl/reference/apis.html
+
 ## Expected workflow
 The AMPL workflow in this folder follows these steps:
 1. Load the core model from `OptOrch_core.mod`.
