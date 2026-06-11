@@ -6,7 +6,7 @@ OptOrch provides a modular optimization framework for seed orchard deployment. T
 The repository is organized into three main parts.
 - `01_models/`
 	- Contains the core AMPL formulation and six tailored AMPL model variants.
-- `02_minimal_AMPL_example/`
+- `02_examples/`
 	- Provides a small standalone AMPL example for users who want to inspect and run the algebraic formulation directly.
 - `03_manuscript_reproduction/`
 	- Contains R-only materials for reproducing the simulation-based manuscript scenarios and Figures 2–3.
