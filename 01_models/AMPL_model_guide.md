@@ -239,7 +239,7 @@ If Gurobi is used as the solver, users also need a working Gurobi installation a
 
 The authors used Gurobi as the optimization solver in the manuscript analyses.
 
-### Option 1. Run from the AMPL IDE
+#### Option 1. Run from the AMPL IDE
 
 1. Open the AMPL IDE.
 
@@ -267,7 +267,7 @@ include OptOrch.run;
 
 The optimization problem will be solved using the solver specified in `OptOrch.run`.
 
-### Option 2. Run from a terminal or command prompt
+#### Option 2. Run from a terminal or command prompt
 
 1. Open a terminal or command prompt.
 
@@ -291,7 +291,7 @@ include OptOrch.run;
 
 The optimization problem will be solved using the solver specified in `OptOrch.run`.
 
-### Option 3. Run through an AMPL API
+#### Option 3. Run through an AMPL API
 
 AMPL can also be called from programming environments using AMPL APIs.
 
