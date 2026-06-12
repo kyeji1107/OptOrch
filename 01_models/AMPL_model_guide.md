@@ -42,6 +42,7 @@ param b :=
 2 0.185
 3 0.132
 4 0.097
+;
 ~~~
 
 In this structure:
@@ -89,6 +90,7 @@ param l :=
 2 0.01
 3 0.01
 4 0.01
+;
 ~~~
 
 In this structure:
@@ -111,6 +113,7 @@ param u :=
 2 0.15
 3 0.15
 4 0.15
+;
 ~~~
 
 In this structure:
