@@ -37,6 +37,7 @@ This file contains the breeding values of candidate individuals. Users should re
 Example structure:
 
 ~~~text
+param b :=
 1 0.241
 2 0.185
 3 0.132
@@ -83,6 +84,7 @@ This file contains the lower contribution bound for each candidate. Users should
 Example structure:
 
 ~~~text
+param l :=
 1 0.01
 2 0.01
 3 0.01
@@ -104,6 +106,7 @@ This file contains the upper contribution bound for each candidate. Users should
 Example structure:
 
 ~~~text
+param u :=
 1 0.15
 2 0.15
 3 0.15
