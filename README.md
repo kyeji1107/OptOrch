@@ -43,6 +43,7 @@ Note: `ASRemL-R` and `gurobi` require separate installation and licensing.
 OptOrch/
 ├── README.md
 ├── 01_models/
+│   ├── AMPL_model_guide.md
 │   ├── 001_core/
 │   │   └── OptOrch_core.mod
 │   └── 002_tailored_models/
@@ -99,6 +100,16 @@ OptOrch/
 └── LICENSE
 ~~~
 ## 01_models
+This directory contains the AMPL model files used by OptOrch.
+
+A detailed guide for preparing AMPL input data, modifying model formulations, and running the minimal AMPL example is provided in:
+
+~~~text
+01_models/AMPL_model_guide.md
+~~~
+
+The guide explains the roles and formats of AMPL-related files, including `.mod`, `.dat`, and `.run` files, and describes how users can adapt the example input files such as `b.dat`, `c.dat`, `l.dat`, `u.dat`, and `OptOrch.dat` for their own datasets.
+
 ### Core model
 The core AMPL model is provided in:
 ~~~text
