@@ -190,6 +190,55 @@ The minimal AMPL example can be executed through several AMPL interfaces.
 
 We recommend using the AMPL IDE because it allows users to inspect the model file, data files, and run script in a single working environment.
 
+### OptOrch.run 
+
+The minimal example is executed using `OptOrch.run`.
+
+Example structure:
+
+~~~text
+reset;
+model OptOrch.mod;
+data OptOrch.dat;
+
+read {i in S} b[i] < b.dat;
+read {i in S} l[i] < l.dat;
+read {i in S} u[i] < u.dat;
+read {i in S, j in S} c[i,j] < c.dat;
+
+option solver GUROBI;
+
+solve;
+
+display gain;
+display x;
+~~~
+
+### Requirements
+To run this example, users need:
+- AMPL
+- A solver that supports MIQP or MIQCP
+	- The authors used Gurobi.
+- A valid AMPL license
+- A valid solver license, if required by the selected solver
+
+### Installing AMPL and setting up licenses
+
+Please refer to the official AMPL documentation for installation and license activation:
+
+- AMPL website: https://ampl.com
+- AMPL installation guide: https://ampl.com/ampl-install-guide/
+- AMPL installation documentation: https://dev.ampl.com/ampl/install.html
+- AMPL license troubleshooting: https://dev.ampl.com/help/dynamic-license-troubleshooting.html
+
+If Gurobi is used as the solver, users also need a working Gurobi installation and license:
+
+- Gurobi website: https://www.gurobi.com
+- Gurobi documentation: https://docs.gurobi.com/
+- Gurobi license setup guide: https://support.gurobi.com/hc/en-us/articles/12872879801105-How-do-I-retrieve-and-set-up-a-Gurobi-license
+
+The authors used Gurobi as the optimization solver in the manuscript analyses.
+
 ### Option 1. Run from the AMPL IDE
 
 1. Open the AMPL IDE.
@@ -251,31 +300,6 @@ For API-based execution, please refer to the official AMPL API documentation:
 - AMPL APIs: https://dev.ampl.com/ampl/reference/apis.html
 - AMPL MATLAB API: https://ampl.com/api/latest/matlab/index.html
 - AMPL R API: https://rAMPL.ampl.com/
-
-## 4. Execution script structure
-
-The minimal example is executed using `OptOrch.run`.
-
-Example structure:
-
-~~~text
-reset;
-model OptOrch.mod;
-data OptOrch.dat;
-
-read {i in S} b[i] < b.dat;
-read {i in S} l[i] < l.dat;
-read {i in S} u[i] < u.dat;
-read {i in S, j in S} c[i,j] < c.dat;
-
-option solver GUROBI;
-
-solve;
-
-display gain;
-display x;
-~~~
-
 
 ## Summary
 
