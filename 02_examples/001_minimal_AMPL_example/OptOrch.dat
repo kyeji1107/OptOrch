@@ -1,5 +1,6 @@
 data;
+
 param ns := 30;
-param cu := 0.5; #It is not necessary, if you don't want to consider pairwise coancestry.
+param cu := 0.5;  # Needed only when pairwise coancestry is considered.
 param nc := 100;
-param nd := 20; #It is not necessary, if you don't want to consider pollen contaminants.
+param nd := 20;   # Needed only when pollen contamination is considered.
