@@ -10,6 +10,9 @@ The repository is organized into three main parts.
 	- Provides a small standalone AMPL example for users who want to inspect and run the algebraic formulation directly.
 - `03_manuscript_reproduction/`
 	- Contains R-only materials for reproducing the simulation-based manuscript scenarios and figures 2–3.
+ - `04_shiny_app/`
+	- Provides a local-run Shiny app for running two optimization scenarios in the manuscript through a graphical user interface.
+
 ## Requirements
 ### AMPL-based example
 - AMPL: https://ampl.com
@@ -38,6 +41,17 @@ For figure generation:
 - `tidyverse`
   
 Note: `ASRemL-R` and `gurobi` require separate installation and licensing.
+### Local-run Shiny app
+The Shiny app requires:
+* R
+* `shiny`
+* `data.table`
+* `Matrix`
+* `ggplot2`
+* `gurobi`
+
+Note: The app also requires a local Gurobi installation and a valid Gurobi license. The Shiny app runs locally and uses the user's local R environment and local Gurobi license.
+
 ## Repository structure
 ~~~text
 OptOrch/
@@ -97,6 +111,9 @@ OptOrch/
 │           └── outputs/
 │               ├── figure3_data.csv
 │               └── figure3_genetic_response.pdf
+├── 04_shiny_app/
+│   ├── app.R
+│   └── README.md
 └── LICENSE
 ~~~
 ## 01_models
@@ -261,6 +278,27 @@ Figure 3 can be reproduced using:
 Expected files in the `outputs/` folder:
 - `figure3_data.csv`
 - `figure3_genetic_response.pdf`
+
+## 04_shiny_app
+This directory contains a local-run Shiny app for running two optimization scenarios through a graphical user interface.
+The app is provided in:
+```text
+04_shiny_app/app.R
+```
+A detailed guide for launching and using the app is provided in:
+```text
+04_shiny_app/README.md
+```
+The app currently supports:
+* Scenario 1: status number constraint
+* Scenario 2: pollen contamination
+The Shiny app runs one selected dataset and one selected status number at a time. It displays the run status, summary table, selected individuals, contribution plot, and Gurobi log in the Shiny interface.
+Importantly, the `Run optimization` button does not write, overwrite, or modify any files in the manuscript reproduction folders. Newly generated results are displayed only in the current Shiny session. Users can manually download the selected individuals table if needed.
+To launch the app, open R or RStudio from the OptOrch repository root and run:
+```r
+shiny::runApp("04_shiny_app")
+```
+
 ## Running the R scripts
 Each R script uses relative paths based on the current working directory.
 Before running a script, set the working directory to the folder containing that script.
@@ -290,6 +328,7 @@ source("make_figure3_genetic_response.R")
 - The simulation script requires MoBPS and ASRemL-R.
 - The scenario and figure scripts use relative paths. Run each script from its own folder.
 - The authors used Gurobi as the optimization solver.
+- The local-run Shiny app requires `shiny`, `data.table`, `Matrix`, `ggplot2`, `gurobi`, and a working local Gurobi license.
 ## Contact
 For any inquiries, please contact:
 - Corresponding author: Prof. Milan Lstibůrek
