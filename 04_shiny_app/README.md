@@ -1,4 +1,4 @@
-## OptOrch Local-Run Shiny App
+# OptOrch Local-Run Shiny App
 
 This folder contains a local-run Shiny app for running two R-Gurobi optimization scenarios from the OptOrch manuscript reproduction workflow. The app allows users to run selected optimization settings through a graphical user interface without directly editing the R scripts.
 
@@ -27,7 +27,7 @@ The Shiny app should be launched from the OptOrch repository root:
 OptOrch/
 ```
 
-### Requirements
+## Requirements
 
 The app requires:
 
@@ -71,7 +71,7 @@ If the current working directory is already `04_shiny_app`, run:
 shiny::runApp(".")
 ```
 
-### What the app does
+## What the app does
 
 The app runs one selected dataset and one selected status number at a time. It currently supports two optimization scenarios:
 
@@ -304,9 +304,9 @@ The `Contribution plot` tab shows a bar plot of optimized contributions for the 
 
 The `Gurobi log` tab displays the Gurobi solver log. For newly generated runs, the log is read from a temporary file created during the current Shiny session. For existing outputs, the log is loaded in read-only mode if available.
 
-### Troubleshooting
+## Troubleshooting
 
-#### The app cannot find the repository root
+### The app cannot find the repository root
 
 Launch the app from the OptOrch repository root:
 
@@ -322,7 +322,7 @@ The repository root should contain:
 04_shiny_app/
 ```
 
-#### The app cannot find the simulation data
+### The app cannot find the simulation data
 
 Check that the simulated data are located in:
 
@@ -336,7 +336,7 @@ or:
 03_manuscript_reproduction/001_simulated_data/MoBPS_generated_data/Heri_0.2/
 ```
 
-#### Gurobi license error
+### Gurobi license error
 
 If the app returns a Gurobi license error, first test Gurobi directly in R:
 
@@ -357,7 +357,7 @@ res$status
 
 If this test fails, the issue is with the local Gurobi installation or license, not with the Shiny app.
 
-#### Missing R packages
+### Missing R packages
 
 If an error says that a required package is missing, install the missing package. For example:
 
@@ -370,6 +370,6 @@ install.packages("ggplot2")
 
 The Gurobi R package must be installed separately from the local Gurobi installation directory.
 
-### Notes
+## Notes
 
 This Shiny app runs the optimization locally. It does not send data to a remote server. The optimization uses the user's local R environment and local Gurobi license. The `Run optimization` button does not modify existing manuscript reproduction outputs. This design avoids the need to host a public Gurobi-enabled web server and allows academic users to run the app using their own Gurobi academic license.
