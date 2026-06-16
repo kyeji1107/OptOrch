@@ -1,4 +1,4 @@
-### OptOrch Local-Run Shiny App
+## OptOrch Local-Run Shiny App
 
 This folder contains a local-run Shiny app for running two R-Gurobi optimization scenarios from the OptOrch manuscript reproduction workflow. The app allows users to run selected optimization settings through a graphical user interface without directly editing the R scripts.
 
