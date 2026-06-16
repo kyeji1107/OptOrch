@@ -306,7 +306,7 @@ The `Gurobi log` tab displays the Gurobi solver log. For newly generated runs, t
 
 ### Troubleshooting
 
-### The app cannot find the repository root
+#### The app cannot find the repository root
 
 Launch the app from the OptOrch repository root:
 
@@ -322,7 +322,7 @@ The repository root should contain:
 04_shiny_app/
 ```
 
-### The app cannot find the simulation data
+#### The app cannot find the simulation data
 
 Check that the simulated data are located in:
 
@@ -336,7 +336,7 @@ or:
 03_manuscript_reproduction/001_simulated_data/MoBPS_generated_data/Heri_0.2/
 ```
 
-### Gurobi license error
+#### Gurobi license error
 
 If the app returns a Gurobi license error, first test Gurobi directly in R:
 
@@ -357,7 +357,7 @@ res$status
 
 If this test fails, the issue is with the local Gurobi installation or license, not with the Shiny app.
 
-### Missing R packages
+#### Missing R packages
 
 If an error says that a required package is missing, install the missing package. For example:
 
