@@ -1,24 +1,33 @@
 # OptOrch Local-Run Shiny App
 
-This folder contains a local-run Shiny app for running two R-Gurobi optimization scenarios from the OptOrch manuscript reproduction workflow. The app allows users to run selected optimization settings through a graphical user interface without directly editing the R scripts.
+This folder contains a local-run Shiny app for running R-Gurobi seed orchard contribution optimization through a graphical user interface. The app allows users to run optimization with their own input data without directly editing the R scripts.
 
-### Important safety note
+For a step-by-step visual guide, see:
 
-Running the optimization from the Shiny app does not write, overwrite, or modify any files in the manuscript reproduction folders. Newly generated results are displayed only in the current Shiny session. Users can download the selected individuals table manually if needed.
+```text
+OptOrch_Shiny_App_Manual_EN_v1.pdf
+```
 
-### Folder location
+## Important note
+
+The Shiny app runs the optimization locally. It uses the user's local R environment and local Gurobi license. It does not send data to a remote server.
+
+Newly generated results are displayed in the current Shiny session. Users can download the selected individuals table manually if needed.
+
+## Folder location
 
 The expected repository structure is:
 
 ```text
 OptOrch/
 ├── 03_manuscript_reproduction/
-│   ├── 001_simulated_data/
-│   ├── 002_scenario1_status_number/
-│   └── 003_scenario2_pollen_contamination/
 └── 04_shiny_app/
     ├── app.R
-    └── README.md
+    ├── README.md
+    ├── OptOrch_Shiny_App_Manual_EN_v1.pdf
+    └── Input_data/
+        ├── BV.csv
+        └── coMatrix.csv
 ```
 
 The Shiny app should be launched from the OptOrch repository root:
@@ -31,10 +40,10 @@ OptOrch/
 
 The app requires:
 
-* R
-* Shiny and other required R packages
-* A local Gurobi installation
-* A valid Gurobi license
+- R
+- Shiny and other required R packages
+- A local Gurobi installation
+- A valid Gurobi license
 
 ### Required R packages
 
@@ -50,7 +59,57 @@ The app also requires the Gurobi R package. The Gurobi R package is usually inst
 
 Before running the Shiny app, check that the Gurobi R package and license work correctly. Academic users can use their own academic Gurobi license.
 
-### Launching the Shiny app
+## Input files
+
+The app reads two input files from:
+
+```text
+04_shiny_app/Input_data/
+```
+
+The required files are:
+
+```text
+BV.csv
+coMatrix.csv
+```
+
+### BV.csv
+
+`BV.csv` contains the candidate IDs and breeding values.
+
+Recommended format:
+
+```csv
+ID,BV
+1,-0.096
+2,0.334
+3,0.049
+```
+
+Required columns:
+
+- `ID`: individual identifier
+- `BV`: breeding value used in the objective function
+
+### coMatrix.csv
+
+`coMatrix.csv` contains the pairwise coancestry matrix among the same candidate individuals in `BV.csv`.
+
+Recommended format:
+
+```csv
+ID,1,2,3
+1,0.498,0.002,0.001
+2,0.002,0.492,0.003
+3,0.001,0.003,0.498
+```
+
+The row and column IDs should match the `ID` values in `BV.csv`. The matrix must be square and symmetric.
+
+If the available input is a genetic or genomic relationship matrix, scale it by 0.5 before saving it as `coMatrix.csv`.
+
+## Launching the Shiny app
 
 Open R or RStudio and set the working directory to the OptOrch repository root. For example:
 
@@ -73,23 +132,36 @@ shiny::runApp(".")
 
 ## What the app does
 
-The app runs one selected dataset and one selected status number at a time. It currently supports two optimization scenarios:
+The app runs seed orchard contribution optimization using `BV.csv` and `coMatrix.csv` in `04_shiny_app/Input_data/`.
 
-* Scenario 1: Status number
+It currently supports two optimization scenarios:
 
-  * Runs the status number constrained optimization.
-  * The internal contribution sum is fixed to 1.
-  * The quadratic constraint is `p'C p <= 1 / (2Ns)`.
-* Scenario 2: Pollen contamination
+- Scenario 1: Status number
+	- Runs the status number constrained optimization.
+	- The internal contribution sum is fixed to 1.
+	- The quadratic constraint is `p'C p <= 1 / (2Ns)`.
+- Scenario 2: Pollen contamination
+	- Runs the optimization with pollen contamination.
+	- The internal contribution sum is adjusted according to the pollen contamination rate.
+	- The quadratic constraint is adjusted using the number of external pollen parents.
+	- The app calculates internal gain and total gain.
 
-  * Runs the optimization with pollen contamination.
-  * The internal contribution sum is adjusted according to the pollen contamination rate.
-  * The quadratic constraint is adjusted using the number of external pollen parents.
-  * The app calculates internal gain and total gain.
+## User interface
 
-### User interface
+The left panel contains user inputs. The right panel displays the run status, summary table, selected individuals, contribution plot, and Gurobi log.
 
-The left panel contains the user inputs. The right panel displays the run status, summary table, selected individuals, contribution plot, and Gurobi log.
+### Input data check
+
+The `Input data check` box shows whether the required input files are available:
+
+```text
+Input data folder: FOUND
+BV.csv: FOUND
+coMatrix.csv: FOUND
+Ready to run: YES
+```
+
+Click `Refresh input data status` after replacing or adding input files.
 
 ### Scenario
 
@@ -104,43 +176,75 @@ Choose `Scenario 1: Status number` to run the basic status number constrained op
 
 ### Status number
 
-Use `Status number (Ns)` to select the target status number. Available values are:
+Use `Status number (Ns)` to enter the target status number. The accepted range is:
 
 ```text
-10
-20
-30
-40
+1 to 100
 ```
 
-The app uses tuned Gurobi parameters for each status number.
-
-### Dataset number
-
-Use `Dataset number` to select the simulation dataset. Available values are:
+The status number is used in the quadratic coancestry constraint:
 
 ```text
-1 to 30
+p'C p <= 1 / (2Ns)
 ```
 
-The dataset number corresponds to the input files:
+### Gurobi parameter setting
+
+Use `Gurobi parameter setting` to choose the parameter set.
+
+Available options are:
 
 ```text
-rep1_Gmatrix_tuned_all.csv
-rep1_GBLUP_results.csv
-rep2_Gmatrix_tuned_all.csv
-rep2_GBLUP_results.csv
-...
-rep30_Gmatrix_tuned_all.csv
-rep30_GBLUP_results.csv
+Default
+Tuned for Ns = 10
+Tuned for Ns = 20
+Tuned for Ns = 30
+Tuned for Ns = 40
 ```
 
-For example, `Dataset number = 1` uses:
+`Default` applies only the essential app parameters:
 
 ```text
-rep1_Gmatrix_tuned_all.csv
-rep1_GBLUP_results.csv
+OutputFlag = 1
+NonConvex = 2
 ```
+
+The tuned parameter sets are optional reproducibility aids based on the parameter settings used in the manuscript. They can be selected by users who want to try a tuned setting close to their chosen status number. The best parameter setting may vary depending on the dataset and model.
+
+### Time limit
+
+Use `Time limit` to set a maximum optimization time.
+
+Available options are:
+
+```text
+None
+1 hour
+3 hours
+6 hours
+12 hours
+24 hours
+```
+
+If the selected time limit is reached, Gurobi stops and the app reports:
+
+```text
+Run status: time limit reached
+```
+
+### MIPGap
+
+Use `MIPGap (optional)` to enter a custom MIP gap.
+
+Leave this field blank to use the Gurobi default.
+
+Example:
+
+```text
+0.005
+```
+
+This means a 0.5% MIP gap tolerance.
 
 ### Lower contribution bound
 
@@ -184,60 +288,39 @@ This value is used to adjust the quadratic constraint under pollen contamination
 
 ### Print Gurobi log in R console
 
-Use `Print Gurobi log in R console` to control whether the Gurobi optimization log is printed in the R console. If checked, the Gurobi log is printed while the optimization is running. If unchecked, the console output is reduced. For newly generated runs, the app stores the Gurobi log in a temporary file for display in the current Shiny session. It does not overwrite any existing `gurobi.log` file in the repository.
+Use `Print Gurobi log in R console while running` to control whether the Gurobi optimization log is printed in the R console.
+
+If checked, the Gurobi log is printed while the optimization is running. If unchecked, console output is reduced. The app also stores the Gurobi log in a temporary file for display in the current Shiny session.
 
 ### Run optimization
 
 Click `Run optimization` to run the selected optimization. The app will:
 
-* Detect the OptOrch repository root automatically.
-* Read the simulated data for the selected dataset number.
-* Build the optimization model.
-* Run Gurobi locally.
-* Display the summary, selected individuals, contribution plot, and Gurobi log in the Shiny interface.
-* Avoid writing to or overwriting existing manuscript reproduction output folders.
-  The newly generated result is not automatically saved into the repository output folders. To save the selected individuals table from the current Shiny session, use `Download selected individuals`.
-
-### Load existing outputs
-
-Click `Load existing outputs` to inspect the manuscript reproduction results already included in the repository. This button reads existing outputs in read-only mode and does not run Gurobi.
+- Detect the OptOrch repository root automatically.
+- Check the required input files in `04_shiny_app/Input_data/`.
+- Read `BV.csv` and `coMatrix.csv`.
+- Build the optimization model.
+- Run Gurobi locally.
+- Display the summary, selected individuals, contribution plot, and Gurobi log in the Shiny interface.
 
 ### Download selected individuals
 
-Click `Download selected individuals` to download the selected individuals table as a CSV file. This works for both newly generated results and loaded existing outputs.
+Click `Download selected individuals` to download the selected individuals table as a CSV file.
+
 The downloaded file contains:
 
-* `ID`
+- `ID`
+	- Selected individual ID.
+- `ns`
+	- Selected status number.
+- `bv`
+	- Breeding value of the selected individual.
+- `p`
+	- Optimized contribution.
+- `r`
+	- Binary selection variable.
 
-  * Selected individual ID.
-* `iter`
-
-  * Dataset number used internally.
-* `ns`
-
-  * Selected status number.
-* `bv`
-
-  * Breeding value of the selected individual.
-* `p`
-
-  * Optimized contribution.
-* `r`
-
-  * Binary selection variable.
-    The downloaded file name follows this pattern:
-
-```text
-selected_individuals_scenario_1_status_number_ns_10_rep_1.csv
-```
-
-or:
-
-```text
-selected_individuals_scenario_2_pollen_contamination_ns_10_rep_1.csv
-```
-
-### Output tabs
+## Output tabs
 
 The main panel contains five tabs.
 
@@ -246,9 +329,11 @@ The main panel contains five tabs.
 The `Run status` tab displays the current state of the app. It shows messages such as:
 
 ```text
-Choose a scenario and click 'Run optimization' or 'Load existing outputs'.
+Choose a scenario and click 'Run optimization'.
 Optimization is running.
-Finished.
+Run status: optimal solution found
+Run status: not feasible
+Run status: time limit reached
 Error:
 ...
 ```
@@ -257,44 +342,35 @@ If an error occurs, this tab shows the error message.
 
 ### Summary tab
 
-The `Summary` tab displays the run-level summary. For newly generated runs, this summary is generated in the current Shiny session. For existing outputs, this tab displays the summary loaded in read-only mode.
+The `Summary` tab displays the run-level summary.
+
 For Scenario 1, the summary includes:
 
-* `iter`
+- `ns`
+	- Status number.
+- `status`
+	- Gurobi optimization status.
+- `objval`
+	- Objective value.
+- `runtime`
+	- Gurobi runtime.
+- `n_selected`
+	- Number of selected individuals.
 
-  * Dataset number.
-* `ns`
+For Scenario 2, the summary also includes:
 
-  * Status number.
-* `status`
-
-  * Gurobi optimization status.
-* `objval`
-
-  * Objective value.
-* `runtime`
-
-  * Gurobi runtime.
-* `n_selected`
-
-  * Number of selected individuals.
-    For Scenario 2, the summary also includes:
-* `BV_ext_mean`
-
-  * Mean breeding value of the external pollen source population.
-* `sum_p`
-
-  * Sum of internal contributions.
-* `Gain_internal`
-
-  * Gain from internal seed orchard contributions.
-* `Gain_total`
-
-  * Total gain including external pollen contribution.
+- `BV_ext_mean`
+	- Mean breeding value used for the external pollen source.
+- `sum_p`
+	- Sum of internal contributions.
+- `Gain_internal`
+	- Gain from internal seed orchard contributions.
+- `Gain_total`
+	- Total gain including external pollen contribution.
 
 ### Selected individuals tab
 
-The `Selected individuals` tab displays the selected individuals and their optimized contributions. For newly generated runs, this table is generated in the current Shiny session. For existing outputs, this table is loaded in read-only mode.
+The `Selected individuals` tab displays the selected individuals and their optimized contributions.
 
 ### Contribution plot tab
 
@@ -302,7 +378,7 @@ The `Contribution plot` tab shows a bar plot of optimized contributions for the 
 
 ### Gurobi log tab
 
-The `Gurobi log` tab displays the Gurobi solver log. For newly generated runs, the log is read from a temporary file created during the current Shiny session. For existing outputs, the log is loaded in read-only mode if available.
+The `Gurobi log` tab displays the Gurobi solver log. For newly generated runs, the log is read from a temporary file created during the current Shiny session.
 
 ## Troubleshooting
 
@@ -318,58 +394,37 @@ shiny::runApp("04_shiny_app")
 The repository root should contain:
 
 ```text
-03_manuscript_reproduction/
 04_shiny_app/
 ```
 
-### The app cannot find the simulation data
+### The app cannot find input files
 
-Check that the simulated data are located in:
-
-```text
-03_manuscript_reproduction/001_simulated_data/mobps_generated_data/Heri_0.2/
-```
-
-or:
+Check that the input files are located in:
 
 ```text
-03_manuscript_reproduction/001_simulated_data/MoBPS_generated_data/Heri_0.2/
+04_shiny_app/Input_data/
 ```
 
-### Gurobi license error
+The folder should contain:
 
-If the app returns a Gurobi license error, first test Gurobi directly in R:
-
-```r
-library(gurobi)
-model <- list(
-  modelsense = "max",
-  obj = c(1, 1),
-  A = matrix(c(1, 2), nrow = 1),
-  rhs = 4,
-  sense = "<",
-  vtype = c("C", "C"),
-  lb = c(0, 0)
-)
-res <- gurobi(model, list(OutputFlag = 1))
-res$status
+```text
+BV.csv
+coMatrix.csv
 ```
 
-If this test fails, the issue is with the local Gurobi installation or license, not with the Shiny app.
+The app also displays the input file status in the `Input data check` box.
 
-### Missing R packages
+### coMatrix.csv is not symmetric
 
-If an error says that a required package is missing, install the missing package. For example:
+If the app returns:
 
-```r
-install.packages("shiny")
-install.packages("data.table")
-install.packages("Matrix")
-install.packages("ggplot2")
+```text
+coMatrix.csv must be a symmetric coancestry matrix.
 ```
 
-The Gurobi R package must be installed separately from the local Gurobi installation directory.
+check that the matrix is square and symmetric. Also check that row and column IDs match the IDs in `BV.csv`.
+
 
 ## Notes
 
-This Shiny app runs the optimization locally. It does not send data to a remote server. The optimization uses the user's local R environment and local Gurobi license. The `Run optimization` button does not modify existing manuscript reproduction outputs. This design avoids the need to host a public Gurobi-enabled web server and allows academic users to run the app using their own Gurobi academic license.
+This Shiny app runs the optimization locally. It does not send data to a remote server. The optimization uses the user's local R environment and local Gurobi license. This design avoids the need to host a public Gurobi-enabled web server and allows academic users to run the app using their own Gurobi academic license.
