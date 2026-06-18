@@ -8,14 +8,13 @@ library(ggplot2)
 # -----------------------------------------------------------------------------
 # This app runs the two R-Gurobi optimization scenarios locally.
 # Important:
-#   - "Run optimization" displays newly generated results in the Shiny interface.
+#   - "Run optimization" uses BV.csv and coMatrix.csv in 04_shiny_app/Input_data.
+#   - It displays newly generated results in the Shiny interface.
 #   - It does not write, overwrite, or modify existing manuscript reproduction outputs.
-#   - "Load existing outputs" reads previously generated outputs from the repository.
 #
-# Expected location:
-#   OptOrch/
-#   ├── 03_manuscript_reproduction/
-#   └── 04_shiny_app/app.R
+# Expected input data location:
+#   OptOrch/04_shiny_app/Input_data/BV.csv
+#   OptOrch/04_shiny_app/Input_data/coMatrix.csv
 #
 # Launch from the repository root with:
 #   shiny::runApp("04_shiny_app")
@@ -73,32 +72,210 @@ check_required_packages <- function() {
   invisible(TRUE)
 }
 
-tuned_params_by_ns <- function(output_flag = 1) {
+get_input_data_dir <- function(repo_root) {
+  file.path(repo_root, "04_shiny_app", "Input_data")
+}
+
+check_input_data_files <- function(repo_root) {
+  input_dir <- get_input_data_dir(repo_root)
+  bv_path <- file.path(input_dir, "BV.csv")
+  comatrix_path <- file.path(input_dir, "coMatrix.csv")
+  
   list(
-    "10" = list(
-      MIPGap = 0.005,
-      OutputFlag = output_flag,
-      NonConvex = 2,
+    input_dir = input_dir,
+    input_dir_exists = dir.exists(input_dir),
+    bv_path = bv_path,
+    bv_exists = file.exists(bv_path),
+    comatrix_path = comatrix_path,
+    comatrix_exists = file.exists(comatrix_path),
+    ready = dir.exists(input_dir) && file.exists(bv_path) && file.exists(comatrix_path)
+  )
+}
+
+format_input_data_status <- function(info) {
+  paste0(
+    "Input data folder: ", ifelse(info$input_dir_exists, "FOUND", "MISSING"), "\n",
+    "BV.csv: ", ifelse(info$bv_exists, "FOUND", "MISSING"), "\n",
+    "coMatrix.csv: ", ifelse(info$comatrix_exists, "FOUND", "MISSING"), "\n",
+    "Ready to run: ", ifelse(info$ready, "YES", "NO")
+  )
+}
+
+read_bv_file <- function(bv_path) {
+  df <- data.table::fread(
+    bv_path,
+    header = TRUE,
+    data.table = FALSE,
+    check.names = FALSE
+  )
+  
+  if (nrow(df) == 0 || ncol(df) < 2) {
+    stop("BV.csv must contain at least two columns: ID and BV.", call. = FALSE)
+  }
+  
+  id_col <- if ("ID" %in% names(df)) "ID" else names(df)[1]
+  bv_col <- if ("BV" %in% names(df)) "BV" else names(df)[2]
+  
+  ID_vec <- as.character(df[[id_col]])
+  BV_vec <- suppressWarnings(as.numeric(df[[bv_col]]))
+  
+  if (length(ID_vec) == 0 || anyNA(ID_vec) || any(!nzchar(ID_vec))) {
+    stop("Individual IDs could not be read correctly from BV.csv.", call. = FALSE)
+  }
+  
+  if (anyDuplicated(ID_vec)) {
+    stop("BV.csv contains duplicated individual IDs.", call. = FALSE)
+  }
+  
+  if (anyNA(BV_vec)) {
+    stop("Breeding values could not be read correctly from BV.csv.", call. = FALSE)
+  }
+  
+  list(ID_vec = ID_vec, BV_vec = BV_vec)
+}
+
+read_comatrix_file <- function(comatrix_path, ID_vec) {
+  nc <- length(ID_vec)
+  
+  df <- data.table::fread(
+    comatrix_path,
+    header = TRUE,
+    data.table = FALSE,
+    check.names = FALSE
+  )
+  
+  if (nrow(df) == nc && ncol(df) == nc + 1) {
+    row_ids <- as.character(df[[1]])
+    col_ids <- as.character(names(df)[-1])
+    C_df <- df[, -1, drop = FALSE]
+  } else if (nrow(df) == nc && ncol(df) == nc) {
+    row_ids <- NULL
+    col_ids <- as.character(names(df))
+    C_df <- df
+  } else {
+    df_no_header <- data.table::fread(
+      comatrix_path,
+      header = FALSE,
+      data.table = FALSE,
+      check.names = FALSE
+    )
+    
+    if (nrow(df_no_header) == nc && ncol(df_no_header) == nc) {
+      row_ids <- NULL
+      col_ids <- NULL
+      C_df <- df_no_header
+    } else {
+      stop(
+        paste0(
+          "coMatrix.csv dimensions do not match BV.csv. ",
+          "Expected a ", nc, " x ", nc, " matrix, or a ", nc, " x ", nc + 1, " matrix with one ID column."
+        ),
+        call. = FALSE
+      )
+    }
+  }
+  
+  C_mat <- as.matrix(sapply(C_df, function(x) suppressWarnings(as.numeric(x))))
+  
+  if (!all(dim(C_mat) == c(nc, nc)) || anyNA(C_mat)) {
+    stop("coMatrix.csv could not be converted to a numeric square matrix.", call. = FALSE)
+  }
+  
+  if (!is.null(row_ids)) {
+    if (!setequal(row_ids, ID_vec)) {
+      stop("The row IDs in coMatrix.csv do not match the IDs in BV.csv.", call. = FALSE)
+    }
+    row_order <- match(ID_vec, row_ids)
+    C_mat <- C_mat[row_order, , drop = FALSE]
+  }
+  
+  if (!is.null(col_ids) && setequal(col_ids, ID_vec)) {
+    col_order <- match(ID_vec, col_ids)
+    C_mat <- C_mat[, col_order, drop = FALSE]
+  }
+  
+  if (!isTRUE(all.equal(
+    unname(C_mat),
+    unname(t(C_mat)),
+    tolerance = 1e-8,
+    check.attributes = FALSE
+  ))) {
+    max_diff <- max(abs(C_mat - t(C_mat)), na.rm = TRUE)
+    stop(
+      paste0(
+        "coMatrix.csv must be a symmetric coancestry matrix. ",
+        "Maximum absolute difference between C[i,j] and C[j,i]: ",
+        signif(max_diff, 6)
+      ),
+      call. = FALSE
+    )
+  }
+  
+  dimnames(C_mat) <- NULL
+  eig <- eigen(C_mat, symmetric = TRUE)
+  eig$values[eig$values < 1e-6] <- 1e-6
+  C_mat <- eig$vectors %*% diag(eig$values) %*% t(eig$vectors)
+  
+  C_mat
+}
+
+read_input_data <- function(repo_root) {
+  info <- check_input_data_files(repo_root)
+  
+  if (!info$ready) {
+    stop(
+      paste0(
+        "Input data files were not found.\n",
+        "Please place BV.csv and coMatrix.csv in:\n",
+        info$input_dir
+      ),
+      call. = FALSE
+    )
+  }
+  
+  bv <- read_bv_file(info$bv_path)
+  C_mat <- read_comatrix_file(
+    comatrix_path = info$comatrix_path,
+    ID_vec = bv$ID_vec
+  )
+  
+  list(
+    C_mat = C_mat,
+    ID_vec = bv$ID_vec,
+    BV_vec = bv$BV_vec,
+    c_path = info$comatrix_path,
+    b_path = info$bv_path
+  )
+}
+
+get_gurobi_param_set <- function(param_set, output_flag = 1) {
+  base_params <- list(
+    OutputFlag = output_flag,
+    NonConvex = 2
+  )
+  
+  tuned_params <- switch(
+    param_set,
+    
+    "default" = list(),
+    
+    "ns10" = list(
       Aggregate = 0,
       NormAdjust = 0,
       NumericFocus = 3,
       PreMIQCPForm = 1,
       ScaleFlag = 2
     ),
-    "20" = list(
-      MIPGap = 0.005,
-      OutputFlag = output_flag,
-      NonConvex = 2,
+    
+    "ns20" = list(
       Heuristics = 0.5,
       MIQCPMethod = 0,
       PrePasses = 1,
       Presolve = 1,
       ScaleFlag = 0
     ),
-    "30" = list(
-      MIPGap = 0.005,
-      OutputFlag = output_flag,
-      NonConvex = 2,
+    
+    "ns30" = list(
       Aggregate = 0,
       CutPasses = 10,
       Cuts = 1,
@@ -107,75 +284,80 @@ tuned_params_by_ns <- function(output_flag = 1) {
       ScaleFlag = 0,
       ZeroHalfCuts = 0
     ),
-    "40" = list(
-      MIPGap = 0.005,
-      OutputFlag = output_flag,
-      NonConvex = 2,
+    
+    "ns40" = list(
       Heuristics = 0.001,
       NoRelHeurTime = 900,
       ScaleFlag = 2
-    )
+    ),
+    
+    stop(sprintf("Unknown Gurobi parameter setting: %s", param_set), call. = FALSE)
   )
+  
+  base_params[names(tuned_params)] <- tuned_params
+  base_params
 }
 
-read_scenario_inputs <- function(data_dir, iter, nc = 500) {
-  c_path <- list.files(
-    data_dir,
-    pattern = paste0("^rep", iter, "_Gmatrix_tuned_all\\.csv$"),
-    full.names = TRUE
-  )[1]
-  
-  b_path <- list.files(
-    data_dir,
-    pattern = paste0("^rep", iter, "_GBLUP_results\\.csv$"),
-    full.names = TRUE
-  )[1]
-  
-  if (is.na(c_path) || !file.exists(c_path)) {
-    stop(sprintf("Coancestry matrix file was not found for dataset number %s.", iter), call. = FALSE)
+get_time_limit_param <- function(time_limit) {
+  if (is.null(time_limit) || identical(time_limit, "none")) {
+    return(list())
   }
   
-  if (is.na(b_path) || !file.exists(b_path)) {
-    stop(sprintf("Breeding value file was not found for dataset number %s.", iter), call. = FALSE)
+  time_limit_value <- suppressWarnings(as.numeric(time_limit))
+  
+  if (is.na(time_limit_value) || time_limit_value <= 0) {
+    stop("TimeLimit must be a positive numeric value in seconds.", call. = FALSE)
   }
   
-  dfC <- read.csv(
-    c_path,
-    header = FALSE,
-    stringsAsFactors = FALSE,
-    check.names = FALSE
-  )
-  
-  C_block <- dfC[102:601, 102:601, drop = FALSE]
-  C_full <- apply(C_block, 2, function(x) suppressWarnings(as.numeric(x)))
-  C_mat <- as.matrix(C_full) * 0.5
-  
-  eig <- eigen(C_mat, symmetric = TRUE)
-  eig$values[eig$values < 1e-6] <- 1e-6
-  C_mat <- eig$vectors %*% diag(eig$values) %*% t(eig$vectors)
-  
-  dfB <- read.csv(
-    b_path,
-    header = TRUE,
-    stringsAsFactors = FALSE,
-    check.names = FALSE
-  )
-  
-  raw_id <- as.character(dfB[[1]][101:600])
-  ID_vec <- sub("^.*([0-9]{6})$", "\\1", raw_id)
-  BV_vec <- suppressWarnings(as.numeric(dfB[[2]][101:600]))
-  
-  if (length(BV_vec) != nc || anyNA(BV_vec)) {
-    stop("Breeding values could not be read correctly from rows 101:600.", call. = FALSE)
+  list(TimeLimit = time_limit_value)
+}
+
+get_mip_gap_param <- function(mip_gap) {
+  if (is.null(mip_gap) || !nzchar(trimws(mip_gap))) {
+    return(list())
   }
   
-  list(
-    C_mat = C_mat,
-    ID_vec = ID_vec,
-    BV_vec = BV_vec,
-    c_path = c_path,
-    b_path = b_path
-  )
+  mip_gap_value <- suppressWarnings(as.numeric(mip_gap))
+  
+  if (is.na(mip_gap_value) || mip_gap_value < 0) {
+    stop("MIPGap must be a non-negative numeric value, such as 0.005.", call. = FALSE)
+  }
+  
+  list(MIPGap = mip_gap_value)
+}
+
+format_run_status <- function(status, objval = NA_real_, runtime = NA_real_) {
+  if (identical(status, "OPTIMAL")) {
+    return(paste0(
+      "Run status: optimal solution found\n",
+      "Gurobi status: ", status, "\n",
+      "Objective value: ", objval, "\n",
+      "Runtime: ", round(runtime, 2), " seconds"
+    ))
+  }
+  
+  if (status %in% c("INFEASIBLE", "INF_OR_UNBD")) {
+    return(paste0(
+      "Run status: not feasible\n",
+      "Gurobi status: ", status, "\n",
+      "No selected individuals are available for this run."
+    ))
+  }
+  
+  if (identical(status, "TIME_LIMIT")) {
+    return(paste0(
+      "Run status: time limit reached\n",
+      "Gurobi status: ", status, "\n",
+      "The optimization stopped because the selected TimeLimit was reached.\n",
+      "Please check the Summary tab and Gurobi log to see whether a feasible solution was found before the time limit."
+    ))
+  }
+  
+  return(paste0(
+    "Run status: finished, but no optimal solution was returned\n",
+    "Gurobi status: ", status, "\n",
+    "Please check the Summary tab and Gurobi log for details."
+  ))
 }
 
 build_common_constraints <- function(nc, sum_p, lower_bound, upper_bound) {
@@ -198,7 +380,6 @@ build_common_constraints <- function(nc, sum_p, lower_bound, upper_bound) {
 }
 
 make_result_tables <- function(
-    iter,
     ns,
     status,
     objval,
@@ -211,7 +392,6 @@ make_result_tables <- function(
 ) {
   if (is.null(p_vals) || is.null(r_vals)) {
     summary_df <- data.frame(
-      iter = iter,
       ns = ns,
       status = status,
       objval = objval,
@@ -224,7 +404,6 @@ make_result_tables <- function(
     selected_idx <- which(r_vals > 0.5)
     
     summary_df <- data.frame(
-      iter = iter,
       ns = ns,
       status = status,
       objval = objval,
@@ -236,7 +415,6 @@ make_result_tables <- function(
     if (length(selected_idx) > 0) {
       selected_df <- data.frame(
         ID = ID_vec[selected_idx],
-        iter = iter,
         ns = ns,
         bv = BV_vec[selected_idx],
         p = p_vals[selected_idx],
@@ -264,12 +442,14 @@ run_optorch_scenario <- function(
     scenario,
     repo_root,
     ns,
-    iter,
     lower_bound = 0.01,
     upper_bound = 0.15,
     contamination_rate = 0.3,
     external_pollen_parents = 100,
-    output_flag = 1
+    output_flag = 1,
+    gurobi_param_set = "default",
+    time_limit = "none",
+    mip_gap = ""
 ) {
   check_required_packages()
   validate_repo_root(repo_root)
@@ -278,44 +458,8 @@ run_optorch_scenario <- function(
     stop("The lower contribution bound must not be greater than the upper contribution bound.", call. = FALSE)
   }
   
-  nc <- 500
-  data_dir <- file.path(
-    repo_root,
-    "03_manuscript_reproduction",
-    "001_simulated_data",
-    "MoBPS_generated_data",
-    "Heri_0.2"
-  )
-  
-  if (!dir.exists(data_dir)) {
-    data_dir_alt <- file.path(
-      repo_root,
-      "03_manuscript_reproduction",
-      "001_simulated_data",
-      "mobps_generated_data",
-      "Heri_0.2"
-    )
-    
-    if (dir.exists(data_dir_alt)) {
-      data_dir <- data_dir_alt
-    }
-  }
-  
-  if (!dir.exists(data_dir)) {
-    stop(
-      paste0(
-        "Simulation data directory was not found. Expected location: ",
-        file.path(
-          repo_root,
-          "03_manuscript_reproduction",
-          "001_simulated_data",
-          "mobps_generated_data",
-          "Heri_0.2"
-        )
-      ),
-      call. = FALSE
-    )
-  }
+  inputs <- read_input_data(repo_root)
+  nc <- length(inputs$BV_vec)
   
   if (scenario == "Scenario 1: Status number") {
     sum_p <- 1
@@ -335,21 +479,13 @@ run_optorch_scenario <- function(
       )
     }
     
-    ext_path <- file.path(data_dir, sprintf("rep%d_Np2_Data.csv", iter))
-    if (!file.exists(ext_path)) {
-      stop(sprintf("External pollen data file was not found: %s", ext_path), call. = FALSE)
-    }
-    
-    dfExt <- data.table::fread(ext_path)
-    if (!("BV" %in% names(dfExt))) {
-      stop(sprintf("Column 'BV' was not found in external pollen data: %s", ext_path), call. = FALSE)
-    }
-    
-    BV_ext_mean <- mean(as.numeric(dfExt$BV), na.rm = TRUE)
-    extra_summary <- list(BV_ext_mean = BV_ext_mean)
+    BV_ext_mean <- mean(inputs$BV_vec, na.rm = TRUE)
+    extra_summary <- list(
+      BV_ext_mean = BV_ext_mean,
+      external_bv_source = "Mean BV of the input candidate set"
+    )
   }
   
-  inputs <- read_scenario_inputs(data_dir = data_dir, iter = iter, nc = nc)
   cons <- build_common_constraints(
     nc = nc,
     sum_p = sum_p,
@@ -378,9 +514,19 @@ run_optorch_scenario <- function(
     )
   )
   
-  params <- tuned_params_by_ns(output_flag = output_flag)[[as.character(ns)]]
-  if (is.null(params)) {
-    stop(sprintf("No tuned Gurobi parameters were defined for Ns = %d.", ns), call. = FALSE)
+  params <- get_gurobi_param_set(
+    param_set = gurobi_param_set,
+    output_flag = output_flag
+  )
+  
+  time_limit_param <- get_time_limit_param(time_limit)
+  if (length(time_limit_param) > 0) {
+    params[names(time_limit_param)] <- time_limit_param
+  }
+  
+  mip_gap_param <- get_mip_gap_param(mip_gap)
+  if (length(mip_gap_param) > 0) {
+    params[names(mip_gap_param)] <- mip_gap_param
   }
   
   log_file <- tempfile(pattern = "optorch_gurobi_", fileext = ".log")
@@ -391,10 +537,14 @@ run_optorch_scenario <- function(
   status <- if (!is.null(res$status)) as.character(res$status) else "NULL"
   objval <- if (!is.null(res$objval)) res$objval else NA_real_
   runtime <- if (!is.null(res$runtime)) res$runtime else NA_real_
+  run_status_message <- format_run_status(
+    status = status,
+    objval = objval,
+    runtime = runtime
+  )
   
   if (!identical(status, "OPTIMAL")) {
     tables <- make_result_tables(
-      iter = iter,
       ns = ns,
       status = status,
       objval = objval,
@@ -409,7 +559,7 @@ run_optorch_scenario <- function(
       selected = tables$selected,
       iter_dir = NA_character_,
       log_file = log_file,
-      output_note = "Finished. Results are displayed in the Shiny interface only. Existing manuscript reproduction outputs were not modified."
+      output_note = run_status_message
     ))
   }
   
@@ -425,7 +575,6 @@ run_optorch_scenario <- function(
   }
   
   tables <- make_result_tables(
-    iter = iter,
     ns = ns,
     status = status,
     objval = objval,
@@ -442,48 +591,10 @@ run_optorch_scenario <- function(
     selected = tables$selected,
     iter_dir = NA_character_,
     log_file = log_file,
-    output_note = "Finished. Results are displayed in the Shiny interface only. Existing manuscript reproduction outputs were not modified."
-  )
-}
-
-read_existing_outputs <- function(repo_root, scenario, ns, iter) {
-  validate_repo_root(repo_root)
-  
-  if (scenario == "Scenario 1: Status number") {
-    scenario_dir <- file.path(
-      repo_root,
-      "03_manuscript_reproduction",
-      "002_scenario1_status_number"
+    output_note = paste0(
+      run_status_message,
+      "\nResults are displayed in the Shiny interface only."
     )
-  } else {
-    scenario_dir <- file.path(
-      repo_root,
-      "03_manuscript_reproduction",
-      "003_scenario2_pollen_contamination"
-    )
-  }
-  
-  iter_dir <- file.path(
-    scenario_dir,
-    "outputs",
-    sprintf("ns_%02d", ns),
-    paste0("rep_", iter)
-  )
-  
-  summary_path <- file.path(iter_dir, "summary.csv")
-  selected_path <- file.path(iter_dir, "selected_individuals.csv")
-  log_file <- file.path(iter_dir, "gurobi.log")
-  
-  if (!file.exists(summary_path)) {
-    stop(sprintf("summary.csv was not found: %s", summary_path), call. = FALSE)
-  }
-  
-  list(
-    summary = data.table::fread(summary_path),
-    selected = if (file.exists(selected_path)) data.table::fread(selected_path) else data.frame(),
-    iter_dir = iter_dir,
-    log_file = log_file,
-    output_note = paste0("Loaded existing outputs from:\n", iter_dir)
   )
 }
 
@@ -492,6 +603,13 @@ ui <- fluidPage(
   
   sidebarLayout(
     sidebarPanel(
+      h4("Input data check"),
+      verbatimTextOutput("input_data_status"),
+      actionButton(
+        inputId = "refresh_input_data_status",
+        label = "Refresh input data status"
+      ),
+      hr(),
       selectInput(
         inputId = "scenario",
         label = "Scenario",
@@ -500,19 +618,44 @@ ui <- fluidPage(
           "Scenario 2: Pollen contamination"
         )
       ),
-      selectInput(
+      numericInput(
         inputId = "ns",
         label = "Status number (Ns)",
-        choices = c(10, 20, 30, 40),
-        selected = 10
-      ),
-      numericInput(
-        inputId = "iter",
-        label = "Dataset number",
-        value = 1,
+        value = 10,
         min = 1,
-        max = 30,
+        max = 100,
         step = 1
+      ),
+      selectInput(
+        inputId = "gurobi_param_set",
+        label = "Gurobi parameter setting",
+        choices = c(
+          "Default" = "default",
+          "Tuned for Ns = 10" = "ns10",
+          "Tuned for Ns = 20" = "ns20",
+          "Tuned for Ns = 30" = "ns30",
+          "Tuned for Ns = 40" = "ns40"
+        ),
+        selected = "default"
+      ),
+      selectInput(
+        inputId = "time_limit",
+        label = "Time limit",
+        choices = c(
+          "None" = "none",
+          "1 hour" = "3600",
+          "3 hours" = "10800",
+          "6 hours" = "21600",
+          "12 hours" = "43200",
+          "24 hours" = "86400"
+        ),
+        selected = "none"
+      ),
+      textInput(
+        inputId = "mip_gap",
+        label = "MIPGap (optional)",
+        value = "",
+        placeholder = "Leave blank to use Gurobi default (0.0001); e.g., 0.005"
       ),
       numericInput(
         inputId = "lower_bound",
@@ -551,16 +694,12 @@ ui <- fluidPage(
       ),
       checkboxInput(
         inputId = "show_gurobi_log",
-        label = "Print Gurobi log in R console",
+        label = "Print Gurobi log in R console while running",
         value = TRUE
       ),
       actionButton(
         inputId = "run_optimization",
         label = "Run optimization"
-      ),
-      actionButton(
-        inputId = "load_outputs",
-        label = "Load existing outputs"
       ),
       br(),
       br(),
@@ -586,20 +725,64 @@ server <- function(input, output, session) {
   result <- reactiveVal(NULL)
   status_text <- reactiveVal(
     paste0(
-      "Choose a scenario and click 'Run optimization' or 'Load existing outputs'.\n",
-      "Run optimization displays new results without modifying existing manuscript reproduction outputs."
+      "Choose a scenario and click 'Run optimization'.\n",
+      "Run optimization uses BV.csv and coMatrix.csv in 04_shiny_app/Input_data."
     )
   )
+  
+  output$input_data_status <- renderText({
+    input$refresh_input_data_status
+    repo_root <- tryCatch(
+      find_repo_root(),
+      error = function(e) NA_character_
+    )
+    
+    if (is.na(repo_root)) {
+      return("Input data status: error\nRepository root could not be detected.")
+    }
+    
+    format_input_data_status(check_input_data_files(repo_root))
+  })
   
   observeEvent(input$run_optimization, {
     tryCatch({
       repo_root <- find_repo_root()
       validate_repo_root(repo_root)
+      input_info <- check_input_data_files(repo_root)
+      
+      if (!isTRUE(input_info$ready)) {
+        stop(
+          paste0(
+            "Input data files are not ready.\n",
+            format_input_data_status(input_info)
+          ),
+          call. = FALSE
+        )
+      }
+      
+      mip_gap_label <- if (nzchar(trimws(input$mip_gap))) input$mip_gap else "Gurobi default (0.0001)"
+      time_limit_label <- switch(
+        input$time_limit,
+        "none" = "None",
+        "3600" = "1 hour",
+        "10800" = "3 hours",
+        "21600" = "6 hours",
+        "43200" = "12 hours",
+        "86400" = "24 hours",
+        input$time_limit
+      )
       
       status_text(
         paste0(
-          "Optimization is running. Check the R console for Gurobi progress if logging is enabled.\n",
-          "This run will not overwrite existing manuscript reproduction outputs."
+          "Optimization is running.\n",
+          "Input BV file: ", basename(input_info$bv_path), "\n",
+          "Input coMatrix file: ", basename(input_info$comatrix_path), "\n",
+          "Gurobi parameter setting: ", input$gurobi_param_set, "\n",
+          "Time limit: ", time_limit_label, "\n",
+          "MIPGap: ", mip_gap_label, "\n",
+          "If console logging is enabled, Gurobi progress is printed in the R console while running.\n",
+          "The Gurobi log tab will be updated after the run finishes.\n",
+          "This run will not overwrite or modify input files."
         )
       )
       
@@ -608,34 +791,18 @@ server <- function(input, output, session) {
           scenario = input$scenario,
           repo_root = repo_root,
           ns = as.integer(input$ns),
-          iter = as.integer(input$iter),
           lower_bound = input$lower_bound,
           upper_bound = input$upper_bound,
           contamination_rate = input$contamination_rate,
           external_pollen_parents = input$external_pollen_parents,
-          output_flag = if (isTRUE(input$show_gurobi_log)) 1 else 0
+          output_flag = if (isTRUE(input$show_gurobi_log)) 1 else 0,
+          gurobi_param_set = input$gurobi_param_set,
+          time_limit = input$time_limit,
+          mip_gap = input$mip_gap
         )
         incProgress(0.8)
       })
       
-      result(res)
-      status_text(res$output_note)
-    }, error = function(e) {
-      status_text(paste0("Error:\n", conditionMessage(e)))
-    })
-  })
-  
-  observeEvent(input$load_outputs, {
-    tryCatch({
-      repo_root <- find_repo_root()
-      validate_repo_root(repo_root)
-      
-      res <- read_existing_outputs(
-        repo_root = repo_root,
-        scenario = input$scenario,
-        ns = as.integer(input$ns),
-        iter = as.integer(input$iter)
-      )
       result(res)
       status_text(res$output_note)
     }, error = function(e) {
@@ -679,7 +846,7 @@ server <- function(input, output, session) {
       labs(
         x = "Selected individual",
         y = "Optimized contribution",
-        title = paste(input$scenario, "| Ns =", input$ns, "| Dataset number =", input$iter)
+        title = paste(input$scenario, "| Ns =", input$ns)
       ) +
       theme_bw()
   })
@@ -702,8 +869,6 @@ server <- function(input, output, session) {
         gsub("[^A-Za-z0-9]+", "_", tolower(input$scenario)),
         "_ns_",
         input$ns,
-        "_rep_",
-        input$iter,
         ".csv"
       )
     },
