@@ -76,7 +76,9 @@ OptOrch/
 │       ├── b.dat
 │       ├── c.dat
 │       ├── l.dat
-│       └── u.dat
+│       ├── u.dat
+│       └── Expected_output
+│           └── selected_individuals.csv
 ├── 03_manuscript_reproduction/
 │   ├── 001_simulated_data/
 │   │   ├── simulate_MoBPS_population.R
