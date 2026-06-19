@@ -22,7 +22,8 @@ The purpose of this example is to help users understand the basic AMPL-based wor
 ## Requirements
 To run this example, users need:
 - AMPL
-- A solver that supports MIQP or MIQCP
+- A solver that supports MIQCP
+	- The core OptOrch model includes a quadratic coancestry constraint.
 	- The authors used Gurobi.
 - A valid AMPL license
 - A valid solver license, if required by the selected solver
@@ -125,4 +126,5 @@ The AMPL workflow in this folder follows these steps:
 - If AMPL reports a license error, check whether the AMPL license has been activated.
 - If the solver reports a license error, check the solver license separately.
 - If file-loading errors occur, make sure that all files remain in the same folder as `OptOrch.run`.
-  
+- The `expected_output/selected_indivisuals.csv` file is intended as a reference output for checking whether the example runs successfully.
+
