@@ -126,5 +126,5 @@ The AMPL workflow in this folder follows these steps:
 - If AMPL reports a license error, check whether the AMPL license has been activated.
 - If the solver reports a license error, check the solver license separately.
 - If file-loading errors occur, make sure that all files remain in the same folder as `OptOrch.run`.
-- The `expected_output/selected_indivisuals.csv` file is intended as a reference output for checking whether the example runs successfully.
+- The `output/selected_indivisuals.csv` file is intended as a reference output for checking whether the example runs successfully.
 
