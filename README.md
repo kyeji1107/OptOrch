@@ -77,7 +77,7 @@ OptOrch/
 │       ├── c.dat
 │       ├── l.dat
 │       ├── u.dat
-│       └── Expected_output
+│       └── output
 │           └── selected_individuals.csv
 ├── 03_manuscript_reproduction/
 │   ├── 001_simulated_data/
