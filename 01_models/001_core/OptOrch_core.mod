@@ -15,7 +15,7 @@ var r {i in S} binary;
 #Objective function
 maximize gain: sum{i in S} b[i] * p[i];
 
-#Contraints
+#Constraints
 s.t. c1: sum {i in S,j in S} 
      c[i,j] * p[i] * p[j] <= 1/(2*ns);
 s.t. c2: sum {i in S} p[i] = 1;
