@@ -269,6 +269,7 @@ The output folders follow the same structure as Scenario 1.
 The tuned Gurobi parameter settings used in the manuscript reproduction scripts are defined directly in the two scenario scripts:
 - `03_manuscript_reproduction/002_scenario1_status_number/run_scenario1_status_number.R`
 - `03_manuscript_reproduction/003_scenario2_pollen_contamination/run_scenario2_pollen_contamination.R`
+
 In both scripts, the tuned configurations are stored in the object `tuned_params_by_ns <- list()`. This object contains the parameter values for each status-number level (`ns = 10, 20, 30, 40`). During execution, the script selects the parameter set corresponding to the specified `ns` value and passes it to the Gurobi optimizer. These tuned settings correspond to the Gurobi parameters summarized in Table 1 of the manuscript.
 
 ### Step 4. Figure 2 reproduction
