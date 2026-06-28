@@ -229,7 +229,7 @@ Scenario 1 is provided in:
 Files and folders:
 - `run_scenario1_status_number.R`
 	- R script for running Scenario 1.
-	- The script repeats the optimization for `Ns = 10, 20, 30, 40`.
+	- The script repeats the optimization for `ns = 10, 20, 30, 40`.
 - `outputs/`
 	- Optimization outputs for Scenario 1.
 - `outputs/file_description.md`
@@ -249,6 +249,7 @@ rep_2/
 ...
 rep_30/
 ~~~
+
 ### Step 3. Scenario 2: pollen contamination
 Scenario 2 is provided in:
 ~~~text
@@ -257,12 +258,19 @@ Scenario 2 is provided in:
 Files and folders:
 - `run_scenario2_pollen_contamination.R`
 	- R script for running Scenario 2.
-	- The script repeats the optimization for `Ns = 10, 20, 30, 40` under pollen contamination.
+	- The script repeats the optimization for `ns = 10, 20, 30, 40` under pollen contamination.
 - `outputs/`
 	- Optimization outputs for Scenario 2.
 - `outputs/file_description.md`
 	- Description of the output files.
 The output folders follow the same structure as Scenario 1.
+
+### Gurobi tuning parameters
+The tuned Gurobi parameter settings used in the manuscript reproduction scripts are defined directly in the two scenario scripts:
+- `03_manuscript_reproduction/002_scenario1_status_number/run_scenario1_status_number.R`
+- `03_manuscript_reproduction/003_scenario2_pollen_contamination/run_scenario2_pollen_contamination.R`
+In both scripts, the tuned configurations are stored in the object `tuned_params_by_ns <- list()`. This object contains the parameter values for each status-number level (`ns = 10, 20, 30, 40`). During execution, the script selects the parameter set corresponding to the specified `ns` value and passes it to the Gurobi optimizer. These tuned settings correspond to the Gurobi parameters summarized in Table 1 of the manuscript.
+
 ### Step 4. Figure 2 reproduction
 Figure 2 can be reproduced using:
 ~~~text
