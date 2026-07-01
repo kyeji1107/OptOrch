@@ -201,17 +201,17 @@ reset;
 model OptOrch_core.mod;
 data OptOrch.dat;
 
-read {i in S} b[i] < b.dat;
-read {i in S} l[i] < l.dat;
-read {i in S} u[i] < u.dat;
-read {i in S, j in S} c[i,j] < c.dat;
+data b.dat;
+data l.dat;
+data u.dat;
+data c.dat;
 
 option solver GUROBI;
+option gurobi_options 'outlev=1 mipgap=0.05';
 
 solve;
-
 display gain;
-display x;
+display p;
 ~~~
 
 ### Requirements
