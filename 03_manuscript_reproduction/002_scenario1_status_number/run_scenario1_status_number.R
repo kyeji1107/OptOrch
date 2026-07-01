@@ -10,7 +10,7 @@ library(Matrix)
 
 SCRIPT_DIR <- getwd()
 
-DATA_DIR <- file.path(SCRIPT_DIR, "..", "001_simulated_data", "mobps_generated_data", "Heri_0.2")
+DATA_DIR <- file.path(SCRIPT_DIR, "..", "001_simulated_data", "MoBPS_generated_data", "Heri_0.2")
 OUT_DIR <- file.path(SCRIPT_DIR, "outputs")
 
 dir.create(OUT_DIR, showWarnings = FALSE, recursive = TRUE)
