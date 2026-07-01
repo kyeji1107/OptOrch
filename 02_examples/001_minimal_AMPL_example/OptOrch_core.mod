@@ -1,4 +1,4 @@
-#OptOrch.mod
+#OptOrch_core.mod
 #Parameters and sets
 param nc > 0;
 set S := 1..nc by 1;
@@ -6,7 +6,7 @@ param ns > 0;
 param b {i in S};
 param l {i in S} >= 0, <= 1;
 param u {i in S} >= 0, <= 1;
-param c {i in S, j in S};
+param c {i in S, j in S} >= 0, <= 1;
 
 #Variables
 var p {i in S} >= 0, <= 1;
