@@ -6,7 +6,7 @@ param ns > 0;
 param b {i in S};
 param l {i in S} >= 0, <= 1;
 param u {i in S} >= 0, <= 1;
-param c {i in S, j in S} >= 0, <= 1;
+param c {i in S, j in S};
 
 #Variables
 var p {i in S} >= 0, <= 1;
