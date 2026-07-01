@@ -167,7 +167,7 @@ Users who want to change the optimization formulation itself may modify the AMPL
 The core AMPL formulation is provided in:
 
 ~~~text
-01_models/001_core/OptOrch.mod
+01_models/001_core/OptOrch_core.mod
 ~~~
 
 The model file defines the main optimization formulation, including the decision variables, objective function, and constraints.
@@ -198,7 +198,7 @@ Example structure:
 
 ~~~text
 reset;
-model OptOrch.mod;
+model OptOrch_core.mod;
 data OptOrch.dat;
 
 read {i in S} b[i] < b.dat;
@@ -251,7 +251,7 @@ The authors used Gurobi as the optimization solver in the manuscript analyses.
 
 3. Inspect the model, data, and run files if needed:
 
-- `OptOrch.mod`
+- `OptOrch_core.mod`
 - `OptOrch.dat`
 - `OptOrch.run`
 - `b.dat`
@@ -311,7 +311,7 @@ Users who want to run OptOrch with their own data should usually begin by prepar
 - `u.dat`
 - `OptOrch.dat`
 
-Users who want to change the mathematical formulation can modify `OptOrch.mod` or refer to the tailored models in:
+Users who want to change the mathematical formulation can modify `OptOrch_core.mod` or refer to the tailored models in:
 
 ~~~text
 01_models/002_tailored_models/
