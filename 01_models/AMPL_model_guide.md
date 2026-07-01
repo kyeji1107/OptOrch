@@ -192,26 +192,10 @@ We recommend using the AMPL IDE because it allows users to inspect the model fil
 
 ### OptOrch.run 
 
-The minimal example is executed using `OptOrch.run`.
-
-Example structure:
+For the exact commands and output settings, refer to:
 
 ~~~text
-reset;
-model OptOrch_core.mod;
-data OptOrch.dat;
-
-data b.dat;
-data l.dat;
-data u.dat;
-data c.dat;
-
-option solver GUROBI;
-option gurobi_options 'outlev=1 mipgap=0.05';
-
-solve;
-display gain;
-display p;
+02_examples/001_minimal_AMPL_example/OptOrch.run
 ~~~
 
 ### Requirements
