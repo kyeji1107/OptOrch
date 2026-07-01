@@ -446,6 +446,7 @@ run_optorch_scenario <- function(
     upper_bound = 0.15,
     contamination_rate = 0.3,
     external_pollen_parents = 100,
+    external_pollen_bv = 0,
     output_flag = 1,
     gurobi_param_set = "default",
     time_limit = "none",
@@ -479,10 +480,14 @@ run_optorch_scenario <- function(
       )
     }
     
-    BV_ext_mean <- mean(inputs$BV_vec, na.rm = TRUE)
+    if (is.null(external_pollen_bv) || is.na(external_pollen_bv)) {
+      stop("Mean BV of external pollen parents must be a numeric value.", call. = FALSE)
+    }
+    
+    BV_ext_mean <- external_pollen_bv
     extra_summary <- list(
       BV_ext_mean = BV_ext_mean,
-      external_bv_source = "Mean BV of the input candidate set"
+      external_bv_source = "User-specified BV of external pollen parents"
     )
   }
   
@@ -567,11 +572,11 @@ run_optorch_scenario <- function(
   r_vals <- res$x[(nc + 1):(2 * nc)]
   
   if (scenario == "Scenario 2: Pollen contamination") {
-    Gain_internal <- sum(p_vals * inputs$BV_vec)
-    Gain_total <- Gain_internal + (contamination_rate / 2) * extra_summary$BV_ext_mean
+    gain_internal <- sum(p_vals * inputs$BV_vec)
+    gain_total <- gain_internal + (contamination_rate / 2) * extra_summary$BV_ext_mean
     extra_summary$sum_p <- sum(p_vals)
-    extra_summary$Gain_internal <- Gain_internal
-    extra_summary$Gain_total <- Gain_total
+    extra_summary$gain_internal <- gain_internal
+    extra_summary$gain_total <- gain_total
   }
   
   tables <- make_result_tables(
@@ -690,6 +695,12 @@ ui <- fluidPage(
           min = 1,
           max = 10000,
           step = 1
+        ),
+        numericInput(
+          inputId = "external_pollen_bv",
+          label = "Mean BV of external pollen parents",
+          value = 0,
+          step = 0.01
         )
       ),
       checkboxInput(
@@ -772,6 +783,16 @@ server <- function(input, output, session) {
         input$time_limit
       )
       
+      scenario2_text <- if (identical(input$scenario, "Scenario 2: Pollen contamination")) {
+        paste0(
+          "Pollen contamination rate: ", input$contamination_rate, "\n",
+          "Number of external pollen parents: ", input$external_pollen_parents, "\n",
+          "Mean BV of external pollen parents: ", input$external_pollen_bv, "\n"
+        )
+      } else {
+        ""
+      }
+      
       status_text(
         paste0(
           "Optimization is running.\n",
@@ -780,6 +801,7 @@ server <- function(input, output, session) {
           "Gurobi parameter setting: ", input$gurobi_param_set, "\n",
           "Time limit: ", time_limit_label, "\n",
           "MIPGap: ", mip_gap_label, "\n",
+          scenario2_text,
           "If console logging is enabled, Gurobi progress is printed in the R console while running.\n",
           "The Gurobi log tab will be updated after the run finishes.\n",
           "This run will not overwrite or modify input files."
@@ -795,6 +817,7 @@ server <- function(input, output, session) {
           upper_bound = input$upper_bound,
           contamination_rate = input$contamination_rate,
           external_pollen_parents = input$external_pollen_parents,
+          external_pollen_bv = input$external_pollen_bv,
           output_flag = if (isTRUE(input$show_gurobi_log)) 1 else 0,
           gurobi_param_set = input$gurobi_param_set,
           time_limit = input$time_limit,
