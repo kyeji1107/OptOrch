@@ -192,7 +192,7 @@ We recommend using the AMPL IDE because it allows users to inspect the model fil
 
 ### OptOrch.run 
 
-For the exact commands and output settings, refer to:
+For the exact commands and output settings, refer to the example:
 
 ~~~text
 02_examples/001_minimal_AMPL_example/OptOrch.run
