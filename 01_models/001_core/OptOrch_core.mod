@@ -1,4 +1,4 @@
-#OptOrch.mod
+#OptOrch_core.mod
 #Parameters and sets
 param nc > 0;
 set S := 1..nc by 1;
