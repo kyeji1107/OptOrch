@@ -14,5 +14,5 @@ solve;
 display gain;
 
 # Export selected individuals (r=1) and their p-values to a CSV
-printf "Individual_ID,p_value\n" > "selected_individuals.csv";
-printf {i in S: r[i] > 0.5} "%d,%f\n", i, p[i] >> "selected_individuals.csv";
+printf "Individual_ID,p_value\n" > "output/selected_individuals.csv";
+printf {i in S: r[i] > 0.5} "%d,%f\n", i, p[i] >> "output/selected_individuals.csv";
