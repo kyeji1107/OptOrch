@@ -26,7 +26,7 @@ no <- 500
 n_reps <- 30 
 ld_gen <- 100
 
-export_path <- file.path(SCRIPT_DIR, "mobps_generated_data")
+export_path <- file.path(SCRIPT_DIR, "MoBPS_generated_data")
 dir.create(export_path, showWarnings = FALSE, recursive = TRUE)
 
 # --- 2. Main Simulation Loop ---
