@@ -10,7 +10,7 @@ library(patchwork)
 
 SCRIPT_DIR <- getwd()
 
-DATA_DIR <- file.path(SCRIPT_DIR, "..", "..", "001_simulated_data", "mobps_generated_data", "Heri_0.2")
+DATA_DIR <- file.path(SCRIPT_DIR, "..", "..", "001_simulated_data", "MoBPS_generated_data", "Heri_0.2")
 SCENARIO1_OUT_DIR <- file.path(SCRIPT_DIR, "..", "..", "002_scenario1_status_number", "outputs")
 OUT_DIR <- file.path(SCRIPT_DIR, "outputs")
 
