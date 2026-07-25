@@ -22,15 +22,15 @@ dir.create(OUT_DIR, showWarnings = FALSE, recursive = TRUE)
 gblup_file <- file.path(DATA_DIR, "rep1_GBLUP_results.csv")
 
 cases <- list(
-  Ns10 = list(
+  ns10 = list(
     ns_value = 10,
     selected_file = file.path(SCENARIO1_OUT_DIR, "ns_10", "rep_1", "selected_individuals.csv"),
-    out_csv = file.path(OUT_DIR, "figure2_data_Ns10.csv")
+    out_csv = file.path(OUT_DIR, "figure2_data_ns10.csv")
   ),
-  Ns40 = list(
+  ns40 = list(
     ns_value = 40,
     selected_file = file.path(SCENARIO1_OUT_DIR, "ns_40", "rep_1", "selected_individuals.csv"),
-    out_csv = file.path(OUT_DIR, "figure2_data_Ns40.csv")
+    out_csv = file.path(OUT_DIR, "figure2_data_ns40.csv")
   )
 )
 
@@ -98,7 +98,7 @@ plot_pr_obj <- function(file, ns_value) {
       "text",
       x = -Inf,
       y = Inf,
-      label = paste0("italic(N)[s] == ", ns_value),
+      label = paste0("italic(n)[s] == ", ns_value),
       parse = TRUE,
       hjust = -0.1,
       vjust = 1.2,
@@ -138,21 +138,21 @@ plot_pr_obj <- function(file, ns_value) {
 
 make_matched_csv(
   gblup_file = gblup_file,
-  selected_file = cases$Ns10$selected_file,
-  out_csv = cases$Ns10$out_csv
+  selected_file = cases$ns10$selected_file,
+  out_csv = cases$ns10$out_csv
 )
 
 make_matched_csv(
   gblup_file = gblup_file,
-  selected_file = cases$Ns40$selected_file,
-  out_csv = cases$Ns40$out_csv
+  selected_file = cases$ns40$selected_file,
+  out_csv = cases$ns40$out_csv
 )
 
 #---------------------------------------------------------------
 # 5) Generate Figure 2 -----------------------------------------
 
-p_a <- plot_pr_obj(cases$Ns10$out_csv, cases$Ns10$ns_value)
-p_b <- plot_pr_obj(cases$Ns40$out_csv, cases$Ns40$ns_value)
+p_a <- plot_pr_obj(cases$ns10$out_csv, cases$ns10$ns_value)
+p_b <- plot_pr_obj(cases$ns40$out_csv, cases$ns40$ns_value)
 
 p_combined <- (p_a / p_b) +
   plot_annotation(tag_levels = "a") &
