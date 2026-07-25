@@ -60,7 +60,7 @@ OptOrch/
 │   ├── AMPL_model_guide.md
 │   ├── 001_core/
 │   │   └── OptOrch_core.mod
-│   └── 002_tailored_models/
+│   └── 002_tailored/
 │       ├── OptOrch_supp1.mod
 │       ├── OptOrch_supp2.mod
 │       ├── OptOrch_supp3.mod
