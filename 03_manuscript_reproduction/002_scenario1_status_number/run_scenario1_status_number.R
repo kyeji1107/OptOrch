@@ -86,8 +86,8 @@ A_c3a <- cbind(Diagonal(nc, 1), Diagonal(nc, -L))
 A_c3b <- cbind(Diagonal(nc, 1), Diagonal(nc, -U))
 
 A_all <- rbind(A_c2, A_c3a, A_c3b)
-rhs_all <- c(1, rep(0, nc), rep(0, nc))
-sense_all <- c("=", rep(">", nc), rep("<", nc))
+rhs_all <- (1, rep(0, nc), rep(0, nc))
+sense_all <- ("=", rep(">", nc), rep("<", nc))
 
 #---------------------------------------------------------------
 # 3) Load Data and Run Optimization ----------------------------
@@ -127,11 +127,11 @@ for (ns in ns_grid) {
     )[1]
     
     if (is.na(c_path) || is.na(b_path)) {
-      cat(sprintf("ns=%d iter=%d skipped (missing C or BV file)\n", ns, iter))
+      cat(sprintf("ns=%d iter=%d skipped (missing  or BV file)\n", ns, iter))
       next
     }
     
-    # C matrix: rows and columns 102-601 in the original CSV
+    #  C matrix: rows and columns 102-601 in the original CSV
     dfC <- read.csv(
       c_path,
       header = FALSE,
@@ -142,9 +142,13 @@ for (ns in ns_grid) {
     C_block <- dfC[102:601, 102:601, drop = FALSE]
     C_full <- apply(C_block, 2, function(x) suppressWarnings(as.numeric(x)))
     C_full <- as.matrix(C_full)
+    
+    # Convert the genomic relationship matrix G to the coancestry matrix C.
     C_mat <- C_full * 0.5
     
     # Force PSD
+    # Replace eigenvalues below 1e-6 and reconstruct the matrix
+    # to ensure positive semidefiniteness.
     eig <- eigen(C_mat, symmetric = TRUE)
     eig$values[eig$values < 1e-6] <- 1e-6
     C_mat <- eig$vectors %*% diag(eig$values) %*% t(eig$vectors)
