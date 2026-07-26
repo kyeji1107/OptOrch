@@ -14,6 +14,7 @@ This folder contains simulation data generated using MoBPS and used for manuscri
 	- Pollen contaminants.
 	- Randomly sampled external pollen donor population.
 - `Nr`
+	- Reference population.
 	- Randomly sampled trees from the foundation population.
 - `rep0`
 	- Dataset iteration number.
@@ -40,6 +41,7 @@ Rows:
 ### `rep0_Gmatrix_tuned_??.csv`
 
 This file contains tuned genomic relationship matrices.
+For optimization, the genomic relationship matrix is multiplied by 0.5 to obtain the coancestry matrix.
 
 Available versions:
 
