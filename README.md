@@ -105,8 +105,8 @@ OptOrch/
 │       ├── figure2_contributions/
 │       │   ├── make_figure2_contributions.R
 │       │   └── outputs/
-│       │       ├── figure2_data_Ns10.csv
-│       │       ├── figure2_data_Ns40.csv
+│       │       ├── figure2_data_ns10.csv
+│       │       ├── figure2_data_ns40.csv
 │       │       └── figure2_contributions.pdf
 │       └── figure3_genetic_response/
 │           ├── make_figure3_genetic_response.R
@@ -288,8 +288,8 @@ Figure 2 can be reproduced using:
 03_manuscript_reproduction/004_figures/figure2_contributions/make_figure2_contributions.R
 ~~~
 Expected files in the `outputs/` folder:
-- `figure2_data_Ns10.csv`
-- `figure2_data_Ns40.csv`
+- `figure2_data_ns10.csv`
+- `figure2_data_ns40.csv`
 - `figure2_contributions.pdf`
 ### Step 5. Figure 3 reproduction
 Figure 3 can be reproduced using:
