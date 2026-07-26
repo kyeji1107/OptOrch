@@ -55,7 +55,7 @@ In this structure:
 
 Coancestry matrix input file.
 
-This file contains the pairwise coancestry or relationship matrix among candidate individuals. Users should replace the example matrix with a coancestry matrix, numerator relationship matrix, or genomic relationship matrix calculated from their own population.
+This file contains the pairwise coancestry matrix among candidate individuals. Users should replace the example matrix with a coancestry matrix calculated from their own population. If the available input is a genomic relationship matrix, it should generally be multiplied by 0.5 before being supplied as c.dat so that the matrix is expressed on the coancestry scale used by the model.
 
 Example structure:
 
@@ -134,9 +134,12 @@ Example structure:
 data;
 
 param ns := 30;
-param cu := 0.5;
-param nc := 100;
-param nd := 20;
+param nc := 500;
+
+# Used only by selected tailored models:
+# param cu := 0.5;
+# param nd := 20;
+
 ~~~
 
 In this structure:
@@ -180,7 +183,7 @@ Users may modify the `.mod` file if they want to:
 For extensions of the core formulation, users should refer to the tailored AMPL models provided in:
 
 ~~~text
-01_models/002_tailored_models/
+01_models/002_tailored/
 ~~~
 
 
@@ -298,7 +301,7 @@ Users who want to run OptOrch with their own data should usually begin by prepar
 Users who want to change the mathematical formulation can modify `OptOrch_core.mod` or refer to the tailored models in:
 
 ~~~text
-01_models/002_tailored_models/
+01_models/002_tailored/
 ~~~
 
 Users can then run the model using `OptOrch.run` through the AMPL IDE, a terminal or command prompt, or an AMPL API.
