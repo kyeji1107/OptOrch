@@ -3,7 +3,7 @@ This repository contains the materials provided as supplementary files for the o
 deployment”.
 OptOrch provides a modular optimization framework for seed orchard deployment. The repository includes the core AMPL optimization model, six tailored AMPL model variants, a minimal AMPL example, and R-based materials for reproducing the simulation-based analyses and figures 2–3 presented in the manuscript.
 ## Repository overview
-The repository is organized into three main parts.
+The repository is organized into four main parts.
 - `01_models/`
 	- Contains the core AMPL formulation and six tailored AMPL model variants.
 - `02_examples/`
@@ -113,9 +113,13 @@ OptOrch/
 │           └── outputs/
 │               ├── figure3_data.csv
 │               └── figure3_genetic_response.pdf
-├── 04_shiny_app/
+└── 04_shiny_app/
 │   ├── app.R
-│   └── README.md
+│   ├── README.md
+│   ├── OptOrch_Shiny_App_Manual_EN_v1.pdf
+│   └── Input_data/
+│       ├── BV.csv
+│       └── coMatrix.csv
 └── LICENSE
 ~~~
 ## 01_models
@@ -138,7 +142,7 @@ This file contains the main optimization formulation used by OptOrch.
 ### Tailored model variants
 Additional AMPL model files are provided in:
 ~~~text
-01_models/002_tailored_models/
+01_models/002_tailored/
 ~~~
 The tailored models illustrate formulation variants and biological extensions discussed in the manuscript.
 - `OptOrch_supp1.mod`
@@ -171,21 +175,27 @@ Files included:
 * `OptOrch_core.mod`
 
   * Core AMPL model file used for the example.
+ 
 * `OptOrch.dat`
 
   * Integrated data file specifying the main scalar parameters for the example.
+
 * `OptOrch.run`
 
   * AMPL run script for executing the example.
+
 * `b.dat`
 
   * Input file containing breeding values.
+
 * `l.dat`
 
   * Input file containing lower contribution bounds.
+
 * `u.dat`
 
   * Input file containing upper contribution bounds.
+
 * `c.dat`
 
   * Input file containing the coancestry matrix.
