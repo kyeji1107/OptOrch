@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 message: "If you use OptOrch in your work, please cite the software using the following metadata."
 title: "OptOrch"
-version: 1.0.0
+version: 1.0.1
 date-released: 2026-07-26
 doi: 10.5281/zenodo.21597247
 url: "https://github.com/kyeji1107/OptOrch"
