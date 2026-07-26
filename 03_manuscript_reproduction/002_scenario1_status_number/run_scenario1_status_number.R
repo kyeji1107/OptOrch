@@ -131,7 +131,7 @@ for (ns in ns_grid) {
       next
     }
     
-    #  C matrix: rows and columns 102-601 in the original CSV
+    # C matrix: rows and columns 102-601 in the original CSV
     dfC <- read.csv(
       c_path,
       header = FALSE,
