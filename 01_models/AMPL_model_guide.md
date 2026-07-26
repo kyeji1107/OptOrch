@@ -72,7 +72,7 @@ In this structure:
 
 - The values after `param c :` indicate the column candidate indices.
 - The first value in each row indicates the row candidate index.
-- The remaining values in each row indicate the pairwise coancestry or relationship values.
+- The remaining values in each row indicate the pairwise coancestry values.
 - The row and column indices should match the candidate indices used in `b.dat`, `l.dat`, and `u.dat`.
 - The number of rows and columns should match the number of candidate individuals specified by `nc` in `OptOrch.dat`.
 
