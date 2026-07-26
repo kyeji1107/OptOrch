@@ -360,8 +360,5 @@ For any inquiries, please contact:
 - First author: Dr. Ye-Ji Kim
 	- E-mail: kyeji1107@gmail.com
 ## Citation
-For the latest version of OptOrch, use the concept DOI:
-https://doi.org/10.5281/zenodo.21597247
-
 For the archived v1.0.0 release, use:
-https://doi.org/10.5281/zenodo.21597245
+https://doi.org/10.5281/zenodo.21597247
