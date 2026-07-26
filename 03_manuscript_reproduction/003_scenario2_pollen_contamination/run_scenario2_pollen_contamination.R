@@ -154,9 +154,12 @@ for (ns in ns_grid) {
     
     C_block <- dfC[102:601, 102:601, drop = FALSE]
     C_mat <- apply(C_block, 2, function(x) suppressWarnings(as.numeric(x)))
+
+    # Convert the genomic relationship matrix G to the coancestry matrix C.
     C_mat <- as.matrix(C_mat) * 0.5
     
     # Force PSD
+    # Replace eigenvalues below 1e-6 and reconstruct the matrix
     eig <- eigen(C_mat, symmetric = TRUE)
     eig$values[eig$values < 1e-6] <- 1e-6
     C_mat <- eig$vectors %*% diag(eig$values) %*% t(eig$vectors)
