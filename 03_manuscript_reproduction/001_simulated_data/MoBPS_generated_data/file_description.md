@@ -30,13 +30,13 @@ Rows:
 
 - Rows 2 to 101
 	- `Np1`
-	- Parent population.
+
 - Rows 102 to 601
 	- `No`
-	- Offspring candidate population.
+
 - Rows 602 to 1501
 	- `Nr`
-	- Randomly sampled trees from the foundation population.
+
 
 ### `rep0_Gmatrix_tuned_??.csv`
 
