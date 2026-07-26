@@ -148,7 +148,6 @@ for (ns in ns_grid) {
     
     # Force PSD
     # Replace eigenvalues below 1e-6 and reconstruct the matrix
-    # to ensure positive semidefiniteness.
     eig <- eigen(C_mat, symmetric = TRUE)
     eig$values[eig$values < 1e-6] <- 1e-6
     C_mat <- eig$vectors %*% diag(eig$values) %*% t(eig$vectors)
