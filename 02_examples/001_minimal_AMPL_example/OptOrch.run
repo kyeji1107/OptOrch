@@ -8,6 +8,9 @@ data u.dat;
 data c.dat;
 
 option solver GUROBI;
+
+# A MIP gap of 0.05 is used for faster demonstration.
+# The manuscript reproduction scripts use a smaller MIP gap.
 option gurobi_options 'outlev=1 mipgap=0.05';
 
 solve;
