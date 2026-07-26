@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+message: "If you use OptOrch in your work, please cite the software using the following metadata."
+title: "OptOrch"
+version: 1.0.0
+date-released: 2026-07-26
+doi: 10.5281/zenodo.21597245
+url: "https://github.com/kyeji1107/OptOrch"
+repository-code: "https://github.com/kyeji1107/OptOrch"
+license: MIT
+
+authors:
+  - family-names: "Kim"
+    given-names: "Ye-Ji"
+
+  - family-names: "Bittner"
+    given-names: "Václav"
+
+  - family-names: "Kang"
+    given-names: "Kyu-Suk"
+
+  - family-names: "Sagariya"
+    given-names: "Christi"
+
+  - family-names: "Lstibůrek"
+    given-names: "Milan"
