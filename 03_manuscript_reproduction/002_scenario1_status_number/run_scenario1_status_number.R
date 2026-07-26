@@ -86,8 +86,8 @@ A_c3a <- cbind(Diagonal(nc, 1), Diagonal(nc, -L))
 A_c3b <- cbind(Diagonal(nc, 1), Diagonal(nc, -U))
 
 A_all <- rbind(A_c2, A_c3a, A_c3b)
-rhs_all <- (1, rep(0, nc), rep(0, nc))
-sense_all <- ("=", rep(">", nc), rep("<", nc))
+rhs_all <- c(1, rep(0, nc), rep(0, nc))
+sense_all <- c("=", rep(">", nc), rep("<", nc))
 
 #---------------------------------------------------------------
 # 3) Load Data and Run Optimization ----------------------------
@@ -127,7 +127,7 @@ for (ns in ns_grid) {
     )[1]
     
     if (is.na(c_path) || is.na(b_path)) {
-      cat(sprintf("ns=%d iter=%d skipped (missing  or BV file)\n", ns, iter))
+      cat(sprintf("ns=%d iter=%d skipped (missing C or BV file)\n", ns, iter))
       next
     }
     
