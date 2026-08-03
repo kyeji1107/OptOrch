@@ -362,3 +362,6 @@ For any inquiries, please contact:
 ## Citation
 For the archived versions release, use:
 https://doi.org/10.5281/zenodo.21597245
+
+For the archived v1.0.1 release, use:
+https://doi.org/10.5281/zenodo.21610348
