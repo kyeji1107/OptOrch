@@ -1,5 +1,5 @@
 # OptOrch: A modular optimization toolkit for forest tree seed orchard deployment
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21597247.svg)](https://doi.org/10.5281/zenodo.21597247)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21597245.svg)](https://doi.org/10.5281/zenodo.21597245)
 
 This repository contains the materials provided as supplementary files for the optimization framework described in the manuscript, “OptOrch: A modular optimization toolkit for forest tree seed orchard
 deployment”.
@@ -360,5 +360,5 @@ For any inquiries, please contact:
 - First author: Dr. Ye-Ji Kim
 	- E-mail: kyeji1107@gmail.com
 ## Citation
-For the archived v1.0.0 release, use:
-https://doi.org/10.5281/zenodo.21597247
+For the archived versions release, use:
+https://doi.org/10.5281/zenodo.21597245
